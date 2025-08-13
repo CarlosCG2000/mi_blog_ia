@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:css": "npx tailwindcss -i ./src/css/style.css -o ./_site/css/style.css --watch",
+    "build:css": "NODE_ENV=production npx tailwindcss -i ./src/css/style.css -o ./_site/css/style.css --minify",
+    "build:eleventy": "npx @11ty/eleventy",
+    "dev": "npm-run-all --parallel build:css start:eleventy",
     "start:eleventy": "npx @11ty/eleventy --serve",
-    "dev": "npm-run-all --parallel build:css start:eleventy"
+    "build": "npm run build:css && npm run build:eleventy"
   },
   "keywords": [],
   "author": "",
