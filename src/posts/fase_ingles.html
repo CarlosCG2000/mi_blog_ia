@@ -1,0 +1,649 @@
+---
+title: "Fases Inglés"
+date: 2025-08-13
+tags: ["post"]
+image: "https://www.ui1.es/sites/default/files/blog/images/ingles_retocada_1.jpg"
+layout: false
+templateEngine: false
+---
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoja de Ruta Interactiva: De Inglés A2 a C1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral Harmony -->
+    <!-- Application Structure Plan: Se ha diseñado la aplicación como una hoja de ruta interactiva y por fases (A2-B1, B1-B2, B2-C1, y Recursos). Esta estructura fue elegida para transformar un informe denso en un viaje de aprendizaje manejable y no lineal. El usuario puede navegar fácilmente entre los niveles, explorando el contenido a través de pestañas y acordeones (Gramática, Vocabulario, Habilidades). Este enfoque reduce la carga cognitiva, evita abrumar al usuario con texto y le permite centrarse en su etapa actual del camino, alineándose con el objetivo del informe de ser una guía "sin agobios". -->
+    <!-- Visualization & Content Choices: Se han utilizado varios métodos interactivos. 1) Hoja de Ruta Visual (HTML/CSS): Para dar una visión general del progreso. 2) Pestañas y Acordeones (JS): Para organizar la gran cantidad de texto sobre gramática y habilidades en fragmentos digeribles que el usuario elige explorar (Goal: Organize). 3) Gráfico de Anillo (Chart.js): Para visualizar el "Plan de Estudio Flexible", convirtiendo una lista de tiempos en un gráfico atractivo e informativo que muestra la distribución equilibrada de las actividades (Goal: Inform/Compare). 4) Tarjetas de Recursos (HTML/CSS): Para presentar herramientas y enlaces de forma visualmente ordenada. Estas elecciones priorizan la interacción y la claridad sobre la presentación estática. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdfaf6;
+            color: #4a4a4a;
+        }
+
+        .nav-link {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-link.active {
+            color: #c084fc;
+            /* purple-400 */
+            border-bottom-color: #c084fc;
+        }
+
+        .tab-link.active {
+            background-color: #c084fc;
+            color: white;
+        }
+
+        .accordion-header {
+            transition: background-color 0.3s ease;
+        }
+
+        .accordion-content {
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .accordion-content.open {
+            max-height: 2000px;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-purple-600">Tu Viaje al Inglés C1</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#fase1"
+                            class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-purple-500 active">Fase
+                            1: A2 → B1</a>
+                        <a href="#fase2"
+                            class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-purple-500">Fase
+                            2: B1 → B2</a>
+                        <a href="#fase3"
+                            class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-purple-500">Fase
+                            3: B2 → C1</a>
+                        <a href="#recursos"
+                            class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-purple-500">Estrategias
+                            y Recursos</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <select id="mobile-nav"
+                        class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm rounded-md">
+                        <option value="fase1">Fase 1: A2 → B1</option>
+                        <option value="fase2">Fase 2: B1 → B2</option>
+                        <option value="fase3">Fase 3: B2 → C1</option>
+                        <option value="recursos">Estrategias y Recursos</option>
+                    </select>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <section id="fase1" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-purple-700 mb-2">Fase 1: Consolidación A2 y Transición a B1</h2>
+                <p class="text-lg text-gray-600">Construyendo un fundamento sólido para tu futuro en inglés.</p>
+                <p class="mt-4 max-w-3xl mx-auto">Esta primera fase es crucial. Nos centraremos en reforzar las
+                    estructuras gramaticales y el vocabulario que ya conoces, asegurando que no queden lagunas. Unas
+                    bases firmes te permitirán abordar conceptos más complejos con confianza. Aquí encontrarás las
+                    herramientas para dominar los tiempos verbales básicos, el vocabulario esencial para el día a día y
+                    las estrategias para empezar a producir el idioma de forma efectiva.</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="-mb-px flex space-x-4 justify-center" aria-label="Tabs">
+                        <button
+                            class="tab-link whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg active"
+                            data-target="fase1-gramatica">Gramática</button>
+                        <button class="tab-link whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg"
+                            data-target="fase1-vocabulario">Vocabulario</button>
+                        <button class="tab-link whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg"
+                            data-target="fase1-habilidades">Habilidades</button>
+                    </nav>
+                </div>
+
+                <div id="fase1-gramatica" class="tab-content">
+                    <div class="space-y-4">
+                        <div class="accordion-item bg-white rounded-lg shadow-sm">
+                            <button
+                                class="accordion-header w-full flex justify-between items-center p-4 text-left font-semibold text-gray-800 hover:bg-purple-50">Tiempos
+                                Verbales Básicos <span class="text-purple-500 text-xl">›</span></button>
+                            <div class="accordion-content px-4 pb-4 text-gray-600">
+                                <p>Dominio del Presente Simple y Continuo, Pasado Simple (regulares e irregulares), y
+                                    Futuro con 'will' y 'be going to'. Es vital diferenciar sus usos para expresar
+                                    hábitos, acciones en curso y planes.</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item bg-white rounded-lg shadow-sm">
+                            <button
+                                class="accordion-header w-full flex justify-between items-center p-4 text-left font-semibold text-gray-800 hover:bg-purple-50">Verbos
+                                Modales Fundamentales <span class="text-purple-500 text-xl">›</span></button>
+                            <div class="accordion-content px-4 pb-4 text-gray-600">
+                                <p>Uso de <strong>can/could</strong> (habilidad, permiso), <strong>must/have to</strong>
+                                    (obligación), <strong>should</strong> (consejo), y <strong>may/might</strong>
+                                    (posibilidad).</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item bg-white rounded-lg shadow-sm">
+                            <button
+                                class="accordion-header w-full flex justify-between items-center p-4 text-left font-semibold text-gray-800 hover:bg-purple-50">Artículos,
+                                Sustantivos y Adjetivos <span class="text-purple-500 text-xl">›</span></button>
+                            <div class="accordion-content px-4 pb-4 text-gray-600">
+                                <p>Dominio de artículos (a/an, the, sin artículo), sustantivos contables/incontables, y
+                                    la diferencia clave entre adjetivos terminados en -ing (causa del sentimiento, ej.
+                                    boring) y -ed (sentimiento experimentado, ej. bored).</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item bg-white rounded-lg shadow-sm">
+                            <button
+                                class="accordion-header w-full flex justify-between items-center p-4 text-left font-semibold text-gray-800 hover:bg-purple-50">Preposiciones
+                                y Verbos Estáticos <span class="text-purple-500 text-xl">›</span></button>
+                            <div class="accordion-content px-4 pb-4 text-gray-600">
+                                <p>Dominio de preposiciones de lugar y tiempo (at, in, on). Comprensión de los verbos
+                                    estáticos (like, know, want) que no se usan en tiempos continuos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="fase1-vocabulario" class="tab-content hidden">
+                    <div class="space-y-4">
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">Temas Cotidianos</h4>
+                            <p>Familia, amigos, descripciones, casa, ciudad, transporte, hobbies, comida, ropa, clima.
+                                Vocabulario práctico para tu día a día.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">Estrategias de Memorización</h4>
+                            <p>Usa activamente el diccionario, no dejes pasar palabras que no entiendas. Crea flashcards
+                                (con apps como Quizlet) y aprende siempre las palabras en contexto, dentro de una frase.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="fase1-habilidades" class="tab-content hidden">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">🎧 Listening</h4>
+                            <p>Empieza con contenido simple (podcasts como "6 Minute English" de la BBC). Activa audio y
+                                subtítulos en inglés para asociar sonido y texto. El objetivo inicial es captar la idea
+                                general.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">🗣️ Speaking</h4>
+                            <p>¡La fonética es clave! Dedica tiempo a aprender los sonidos del inglés. Una técnica de
+                                baja presión es hablar contigo mismo describiendo tu día. No temas cometer errores.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">📖 Reading</h4>
+                            <p>Comienza con textos cortos y adaptados (noticias para estudiantes, cuentos sencillos).
+                                Ten un diccionario a mano para buscar palabras clave y no perder el hilo.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">✍️ Writing</h4>
+                            <p>Practica escribiendo mensajes y descripciones breves. Una gran estrategia es escribir
+                                antes de hablar: te da tiempo para pensar y aplicar la gramática sin presión.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="fase2" class="content-section hidden">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-purple-700 mb-2">Fase 2: Dominio de B1 y Avance a B2</h2>
+                <p class="text-lg text-gray-600">De usuario básico a usuario independiente y con recursos.</p>
+                <p class="mt-4 max-w-3xl mx-auto">En esta fase de consolidación, pasarás de simplemente comunicarte a
+                    hacerlo con mayor precisión y detalle. Profundizaremos en estructuras gramaticales más complejas
+                    como el Presente Perfecto y los condicionales, y expandiremos tu vocabulario a temas sociales y de
+                    actualidad. El objetivo es que ganes autonomía para manejar una variedad más amplia de situaciones
+                    comunicativas, tanto orales como escritas.</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="-mb-px flex space-x-4 justify-center" aria-label="Tabs">
+                        <button
+                            class="tab-link whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg active"
+                            data-target="fase2-gramatica">Gramática</button>
+                        <button class="tab-link whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg"
+                            data-target="fase2-vocabulario">Vocabulario</button>
+                        <button class="tab-link whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg"
+                            data-target="fase2-habilidades">Habilidades</button>
+                    </nav>
+                </div>
+
+                <div id="fase2-gramatica" class="tab-content">
+                    <div class="space-y-4">
+                        <div class="accordion-item bg-white rounded-lg shadow-sm">
+                            <button
+                                class="accordion-header w-full flex justify-between items-center p-4 text-left font-semibold text-gray-800 hover:bg-purple-50">Presente
+                                Perfecto y Voz Pasiva <span class="text-purple-500 text-xl">›</span></button>
+                            <div class="accordion-content px-4 pb-4 text-gray-600">
+                                <p>Dominio de los tres usos del Presente Perfecto (pasado reciente, experiencias,
+                                    acciones continuas). Comprensión de la Voz Pasiva para cambiar el enfoque de la
+                                    oración y del 'Causative Have' (ej. "I had my car repaired").</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item bg-white rounded-lg shadow-sm">
+                            <button
+                                class="accordion-header w-full flex justify-between items-center p-4 text-left font-semibold text-gray-800 hover:bg-purple-50">Condicionales
+                                (0, 1, 2) y Reported Speech <span class="text-purple-500 text-xl">›</span></button>
+                            <div class="accordion-content px-4 pb-4 text-gray-600">
+                                <p>Uso de condicionales para verdades generales, situaciones probables e hipotéticas.
+                                    Aprender a reportar lo que otros dicen (Reported Speech), cambiando tiempos verbales
+                                    y pronombres.</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item bg-white rounded-lg shadow-sm">
+                            <button
+                                class="accordion-header w-full flex justify-between items-center p-4 text-left font-semibold text-gray-800 hover:bg-purple-50">Verbos
+                                + Infinitivo/Gerundio y Conectores <span
+                                    class="text-purple-500 text-xl">›</span></button>
+                            <div class="accordion-content px-4 pb-4 text-gray-600">
+                                <p>Aprender qué verbos van seguidos de 'to + infinitivo' (want to go) y cuáles de '-ing'
+                                    (enjoy playing). Ampliar el uso de conectores (however, therefore, in addition) para
+                                    estructurar mejor tus ideas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="fase2-vocabulario" class="tab-content hidden">
+                    <div class="space-y-4">
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">Ampliación Temática</h4>
+                            <p>Vocabulario sobre medios de comunicación, medio ambiente, tecnología, salud, educación y
+                                trabajo. Aprende a discutir temas más allá de lo personal.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">Phrasal Verbs y Collocations</h4>
+                            <p>Introduce en tu vocabulario los 'phrasal verbs' más comunes (take off, look for) y las
+                                'collocations' (palabras que van juntas de forma natural, como 'make a decision' o
+                                'heavy rain') para sonar más natural.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="fase2-habilidades" class="tab-content hidden">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">🎧 Listening</h4>
+                            <p>Transición a contenido de nivel intermedio (series, podcasts con ritmo más natural).
+                                Practica la escucha activa: toma notas de palabras nuevas y resume lo que has entendido.
+                            </p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">🗣️ Speaking</h4>
+                            <p>Grábate a ti mismo hablando sobre temas variados (dilemas, noticias). Escúchate de forma
+                                crítica para identificar dudas. Presta atención al 'connected speech' y la entonación
+                                para ganar fluidez.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">📖 Reading</h4>
+                            <p>Lee textos más complejos como artículos de noticias. El objetivo es identificar no solo
+                                la idea principal, sino también los detalles de apoyo y la intención del autor.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">✍️ Writing</h4>
+                            <p>Practica redactando pequeños ensayos. Usa una oración temática fuerte al inicio de cada
+                                párrafo y conecta tus ideas con frases de enlace para dar coherencia a tus textos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="fase3" class="content-section hidden">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-purple-700 mb-2">Fase 3: Maestría de B2 y Transición a C1</h2>
+                <p class="text-lg text-gray-600">Alcanzando la competencia avanzada y la fluidez.</p>
+                <p class="mt-4 max-w-3xl mx-auto">Esta es la etapa final de tu viaje, donde refinarás tus habilidades
+                    para alcanzar un nivel de competencia que te permita usar el inglés de manera flexible, efectiva y
+                    espontánea. El foco está en dominar las estructuras gramaticales más complejas, adquirir un
+                    vocabulario rico y matizado, y desarrollar una fluidez que te permita expresarte con precisión en
+                    cualquier contexto, ya sea social, académico o profesional.</p>
+            </div>
+
+            <div class="tabs-container">
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="-mb-px flex space-x-4 justify-center" aria-label="Tabs">
+                        <button
+                            class="tab-link whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg active"
+                            data-target="fase3-gramatica">Gramática</button>
+                        <button class="tab-link whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg"
+                            data-target="fase3-vocabulario">Vocabulario</button>
+                        <button class="tab-link whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg"
+                            data-target="fase3-habilidades">Habilidades</button>
+                    </nav>
+                </div>
+
+                <div id="fase3-gramatica" class="tab-content">
+                    <div class="space-y-4">
+                        <div class="accordion-item bg-white rounded-lg shadow-sm">
+                            <button
+                                class="accordion-header w-full flex justify-between items-center p-4 text-left font-semibold text-gray-800 hover:bg-purple-50">Dominio
+                                de Estructuras Complejas <span class="text-purple-500 text-xl">›</span></button>
+                            <div class="accordion-content px-4 pb-4 text-gray-600">
+                                <p>Conocimiento perfecto de todos los tiempos verbales y sus matices. Dominio de modales
+                                    en pasado (should have, might have), condicionales avanzadas (3ª y mixtas) y
+                                    estructuras de inversión para dar énfasis.</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item bg-white rounded-lg shadow-sm">
+                            <button
+                                class="accordion-header w-full flex justify-between items-center p-4 text-left font-semibold text-gray-800 hover:bg-purple-50">Oraciones
+                                de Relativo y Voz Pasiva Avanzada <span
+                                    class="text-purple-500 text-xl">›</span></button>
+                            <div class="accordion-content px-4 pb-4 text-gray-600">
+                                <p>Uso avanzado de oraciones de relativo (defining y non-defining) y estructuras pasivas
+                                    complejas para lograr un discurso más sofisticado y preciso.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="fase3-vocabulario" class="tab-content hidden">
+                    <div class="space-y-4">
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">Riqueza y Precisión Léxica</h4>
+                            <p>Adquisición de un vocabulario amplio y rico. Familiaridad total con expresiones
+                                idiomáticas y coloquiales. Capacidad para usar sinónimos, antónimos y entender los
+                                matices y connotaciones de las palabras.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="fase3-habilidades" class="tab-content hidden">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">🎧 Listening</h4>
+                            <p>Capacidad para comprender diversos acentos en cualquier contexto (conversaciones, TV,
+                                películas). Exponte a contenido desafiante que te obligue a esforzarte.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">🗣️ Speaking</h4>
+                            <p>La fluidez C1 es hablar mejor, no más rápido. Busca la espontaneidad y la capacidad de
+                                articular ideas complejas sin aparente esfuerzo. Domina la entonación y el 'sentence
+                                stress'.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">📖 Reading</h4>
+                            <p>Comprende textos largos y complejos, reconociendo sentidos implícitos. Lee por placer y
+                                por desafío, buscando contenido que expanda tus límites.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg mb-2 text-purple-700">✍️ Writing</h4>
+                            <p>Produce textos claros, detallados y bien estructurados sobre temas complejos, demostrando
+                                un uso controlado de conectores y mecanismos de cohesión. Usa herramientas como
+                                Grammarly para pulir tu escritura.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="recursos" class="content-section hidden">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-purple-700 mb-2">Estrategias de Autoaprendizaje y Recursos</h2>
+                <p class="text-lg text-gray-600">Tu caja de herramientas para un aprendizaje constante y sin agobios.
+                </p>
+                <p class="mt-4 max-w-3xl mx-auto">El éxito en el aprendizaje de un idioma depende tanto de la constancia
+                    como de las herramientas que utilizas. Esta sección es tu centro de operaciones. Aquí encontrarás
+                    metodologías de estudio efectivas, una selección de las mejores aplicaciones, podcasts y canales de
+                    YouTube, y un plan de estudio flexible que puedes adaptar a tu vida. El objetivo es darte todo lo
+                    que necesitas para mantener la motivación y progresar de manera sostenible.</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h3 class="text-2xl font-bold text-center text-purple-700 mb-6">Plan de Estudio Flexible Sugerido</h3>
+                <p class="text-center text-gray-600 mb-6">Este gráfico muestra una distribución diaria equilibrada.
+                    Recuerda que es una sugerencia; la clave es la <strong>consistencia</strong>, no la rigidez. Adapta
+                    los tiempos a tu disponibilidad, pero intenta conectar con el inglés cada día.</p>
+                <div class="chart-container">
+                    <canvas id="studyPlanChart"></canvas>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h4 class="font-semibold text-lg mb-3 text-purple-700">📱 Aplicaciones Móviles</h4>
+                    <ul class="space-y-2 text-gray-600 list-disc list-inside">
+                        <li><strong>Duolingo/Busuu:</strong> Para práctica diaria y gamificada.</li>
+                        <li><strong>Memrise/Quizlet:</strong> Para memorizar vocabulario con flashcards.</li>
+                        <li><strong>HelloTalk/Tandem:</strong> Para intercambios de idiomas con nativos.</li>
+                        <li><strong>Preply:</strong> Para encontrar tutores y clases particulares.</li>
+                        <li><strong>Grammarly:</strong> Para corregir y mejorar tu escritura.</li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h4 class="font-semibold text-lg mb-3 text-purple-700">🎙️ Podcasts</h4>
+                    <ul class="space-y-2 text-gray-600 list-disc list-inside">
+                        <li><strong>6 Minute English (BBC):</strong> Ideal para empezar (A2-B1).</li>
+                        <li><strong>Listening Time:</strong> Charlas claras para nivel intermedio.</li>
+                        <li><strong>Luke's ENGLISH Podcast:</strong> Inglés británico práctico y divertido.</li>
+                        <li><strong>Thinking in English:</strong> Para nivel avanzado, con temas complejos.</li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h4 class="font-semibold text-lg mb-3 text-purple-700">📺 Canales de YouTube</h4>
+                    <ul class="space-y-2 text-gray-600 list-disc list-inside">
+                        <li><strong>EngVid:</strong> Clases con múltiples profesores y temas.</li>
+                        <li><strong>Rachel's English:</strong> Enfocado en pronunciación americana.</li>
+                        <li><strong>Jennifer ESL:</strong> Lecciones bien estructuradas por niveles.</li>
+                        <li><strong>VOA Learning English:</strong> Noticias a velocidad reducida.</li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h4 class="font-semibold text-lg mb-3 text-purple-700">📚 Libros y Materiales</h4>
+                    <ul class="space-y-2 text-gray-600 list-disc list-inside">
+                        <li><strong>English Grammar in Use</strong> (Murphy): La biblia de la gramática.</li>
+                        <li><strong>Language Practice Series</strong> (Vince): Gramática y vocabulario por niveles.</li>
+                        <li><strong>Libros de simulacros de examen:</strong> Esenciales para preparar certificaciones.
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h4 class="font-semibold text-lg mb-3 text-purple-700">💬 Práctica con Nativos (Cáceres)</h4>
+                    <ul class="space-y-2 text-gray-600 list-disc list-inside">
+                        <li><strong>Hablemus:</strong> Intercambio en el gastrobar Maestropierro.</li>
+                        <li><strong>Only English:</strong> Eventos en el Espacio SAAL.</li>
+                        <li><strong>Sietelenguas:</strong> Intercambio en Los Siete Jardines.</li>
+                        <li><strong>Academias:</strong> We Love English ofrece un enfoque comunicativo.</li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h4 class="font-semibold text-lg mb-3 text-purple-700">✈️ Inmersión Real</h4>
+                    <ul class="space-y-2 text-gray-600 list-disc list-inside">
+                        <li><strong>Pueblo Inglés:</strong> Programas intensivos de inmersión en España.</li>
+                        <li><strong>Prize English:</strong> Cursos de idiomas en el extranjero.</li>
+                        <li><strong>Viajes organizados:</strong> Academias como English & More.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white mt-12">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500">
+            <p>&copy; 2025 Hoja de Ruta Interactiva de Inglés. Creado para facilitar tu viaje hacia la fluidez.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mainNavLinks = document.querySelectorAll('.nav-link');
+            const mobileNav = document.getElementById('mobile-nav');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            function updateView(targetId) {
+                contentSections.forEach(section => {
+                    section.classList.toggle('hidden', section.id !== targetId);
+                });
+
+                mainNavLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href') === `#${targetId}`);
+                });
+
+                if (mobileNav.value !== targetId) {
+                    mobileNav.value = targetId;
+                }
+
+                window.scrollTo(0, 0);
+            }
+
+            mainNavLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    updateView(targetId);
+                });
+            });
+
+            mobileNav.addEventListener('change', function () {
+                updateView(this.value);
+            });
+
+            const tabsContainers = document.querySelectorAll('.tabs-container');
+            tabsContainers.forEach(container => {
+                const tabLinks = container.querySelectorAll('.tab-link');
+                const tabContents = container.querySelectorAll('.tab-content');
+
+                tabLinks.forEach(link => {
+                    link.addEventListener('click', function () {
+                        const targetId = this.dataset.target;
+
+                        tabLinks.forEach(l => l.classList.remove('active'));
+                        this.classList.add('active');
+
+                        tabContents.forEach(content => {
+                            content.classList.toggle('hidden', content.id !== targetId);
+                        });
+                    });
+                });
+            });
+
+            const accordionItems = document.querySelectorAll('.accordion-item');
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+                const arrow = header.querySelector('span');
+
+                header.addEventListener('click', () => {
+                    const isOpen = content.classList.contains('open');
+
+                    document.querySelectorAll('.accordion-content.open').forEach(openContent => {
+                        openContent.classList.remove('open');
+                        openContent.previousElementSibling.querySelector('span').style.transform = 'rotate(0deg)';
+                    });
+
+                    if (!isOpen) {
+                        content.classList.add('open');
+                        arrow.style.transform = 'rotate(90deg)';
+                    }
+                });
+            });
+
+            const ctx = document.getElementById('studyPlanChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Gramática (30-60m)', 'Vocabulario (15-30m)', 'Lectura (30-60m)', 'Listening (30-60m)', 'Writing (15-30m)', 'Speaking (15-30m)'],
+                        datasets: [{
+                            label: 'Minutos diarios sugeridos',
+                            data: [45, 22.5, 45, 45, 22.5, 22.5],
+                            backgroundColor: [
+                                'rgba(192, 132, 252, 0.7)',
+                                'rgba(167, 139, 250, 0.7)',
+                                'rgba(139, 92, 246, 0.7)',
+                                'rgba(124, 58, 237, 0.7)',
+                                'rgba(109, 40, 217, 0.7)',
+                                'rgba(91, 33, 182, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(192, 132, 252, 1)',
+                                'rgba(167, 139, 250, 1)',
+                                'rgba(139, 92, 246, 1)',
+                                'rgba(124, 58, 237, 1)',
+                                'rgba(109, 40, 217, 1)',
+                                'rgba(91, 33, 182, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 15,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += 'Promedio de ' + context.parsed + ' mins/día';
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

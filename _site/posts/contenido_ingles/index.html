@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva para Dominar el Inglés</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Study Palette (Background: Off-white/Beige, Primary Accent: Muted Blue, Secondary Accent: Soft Green, Text: Dark Gray) -->
+    <!-- Application Structure Plan: A single-page application with a fixed top navigation bar and a tabbed interface (Inicio, Gramática, Vocabulario, Habilidades, Errores Comunes, Cultura). This non-linear, dashboard-style structure was chosen to allow users to instantly access the specific information they need, which is more effective for a reference guide than the linear format of the source report. Sub-navigation within complex sections like Gramática and Vocabulario further enhances usability by allowing granular filtering of content. -->
+    <!-- Visualization & Content Choices: CEFR Skills (Report Table 2.1.1) -> Goal: Compare skill progression -> Viz: Interactive Radar Chart (Chart.js) -> Interaction: Hover to see skill descriptions -> Justification: More engaging and visually intuitive than a static table. Common Errors (Report Section 3.5) -> Goal: Compare incorrect/correct usage -> Viz: Interactive Flip Cards (HTML/CSS/JS) -> Interaction: Click to reveal correct answer -> Justification: Active recall promotes better learning. Phrasal Verbs (Report Section 4.2.3) -> Goal: Organize & find specific verbs -> Viz: Searchable List (HTML/JS) -> Interaction: User types to filter -> Justification: Efficient access to a large dataset. CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F5DC;
+            color: #374151;
+        }
+
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background-color: #3B82F6;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .flip-card {
+            background-color: transparent;
+            perspective: 1000px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 1rem;
+            border-radius: 0.75rem;
+        }
+
+        .flip-card-front {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .flip-card-back {
+            background-color: #BFDBFE;
+            color: #1E40AF;
+            transform: rotateY(180deg);
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <div class="container mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
+            <h1 class="text-2xl font-bold text-blue-600 mb-4 sm:mb-0">Guía Interactiva de Inglés</h1>
+            <nav id="main-nav" class="flex flex-wrap justify-center gap-2">
+                <button data-tab="inicio"
+                    class="tab-button px-4 py-2 rounded-full text-sm font-semibold">Inicio</button>
+                <button data-tab="gramatica"
+                    class="tab-button px-4 py-2 rounded-full text-sm font-semibold">Gramática</button>
+                <button data-tab="vocabulario"
+                    class="tab-button px-4 py-2 rounded-full text-sm font-semibold">Vocabulario</button>
+                <button data-tab="habilidades"
+                    class="tab-button px-4 py-2 rounded-full text-sm font-semibold">Habilidades</button>
+                <button data-tab="errores" class="tab-button px-4 py-2 rounded-full text-sm font-semibold">Errores
+                    Comunes</button>
+                <button data-tab="cultura"
+                    class="tab-button px-4 py-2 rounded-full text-sm font-semibold">Cultura</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <!-- Inicio Section -->
+        <section id="inicio" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-2">Bienvenido a tu Aventura en Inglés</h2>
+                <p class="text-lg text-gray-600">Esta guía está diseñada para ser tu compañera en el viaje desde lo
+                    básico hasta la maestría.</p>
+            </div>
+            <div class="card p-6 mb-8">
+                <h3 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Tu Hoja de Ruta: El Marco Común
+                    Europeo (MCER)</h3>
+                <p class="text-gray-600 mb-6 text-center">El MCER divide el aprendizaje en 6 niveles, desde A1
+                    (Principiante) hasta C2 (Maestría). Este gráfico visualiza las habilidades clave que desarrollarás
+                    en cada etapa. Pasa el ratón sobre los puntos para ver más detalles y entender tu progreso.</p>
+                <div class="chart-container">
+                    <canvas id="cefrChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gramática Section -->
+        <section id="gramatica" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-2">La Arquitectura del Inglés</h2>
+                <p class="text-lg text-gray-600">Domina las reglas que dan estructura y sentido a tu comunicación.</p>
+            </div>
+            <div id="grammar-content" class="space-y-4"></div>
+        </section>
+
+        <!-- Vocabulario Section -->
+        <section id="vocabulario" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-2">Enriquece tu Léxico</h2>
+                <p class="text-lg text-gray-600">Descubre las palabras y frases que te harán sonar como un nativo.</p>
+            </div>
+            <div class="mb-8">
+                <h3 class="text-2xl font-semibold text-gray-700 mb-4">Falsos Amigos: ¡Que no te engañen!</h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4" id="false-friends-grid"></div>
+            </div>
+            <div class="mb-8">
+                <h3 class="text-2xl font-semibold text-gray-700 mb-4">Expresiones Idiomáticas (Idioms)</h3>
+                <p class="text-gray-600 mb-4">Haz clic en las tarjetas para descubrir el significado de estas frases
+                    comunes.</p>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="idioms-grid"></div>
+            </div>
+            <div class="mb-8 card p-6">
+                <h3 class="text-2xl font-semibold text-gray-700 mb-4">Phrasal Verbs Esenciales</h3>
+                <input type="text" id="phrasal-verb-search" placeholder="Busca un phrasal verb (ej: get, take)..."
+                    class="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <ul id="phrasal-verb-list" class="space-y-3 max-h-96 overflow-y-auto pr-2"></ul>
+            </div>
+        </section>
+
+        <!-- Habilidades Section -->
+        <section id="habilidades" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-2">Desarrolla tus Habilidades Clave</h2>
+                <p class="text-lg text-gray-600">Estrategias prácticas para escuchar, hablar, leer y escribir con
+                    confianza.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card p-6" id="listening-skills"></div>
+                <div class="card p-6" id="speaking-skills"></div>
+                <div class="card p-6" id="reading-skills"></div>
+                <div class="card p-6" id="writing-skills"></div>
+            </div>
+        </section>
+
+        <!-- Errores Comunes Section -->
+        <section id="errores" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-2">Errores Comunes para Hispanohablantes</h2>
+                <p class="text-lg text-gray-600">Identifica y corrige los errores más frecuentes para pulir tu inglés.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="common-errors-grid"></div>
+        </section>
+
+        <!-- Cultura Section -->
+        <section id="cultura" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-2">Entendiendo los Matices Culturales</h2>
+                <p class="text-lg text-gray-600">Comunícate de forma auténtica comprendiendo el contexto cultural.</p>
+            </div>
+            <div class="space-y-4" id="culture-content"></div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const tabs = document.querySelectorAll('.tab-button');
+            const sections = document.querySelectorAll('.content-section');
+
+            function switchTab(tabName) {
+                tabs.forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.tab === tabName);
+                });
+                sections.forEach(section => {
+                    section.classList.toggle('active', section.id === tabName);
+                });
+            }
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    switchTab(tab.dataset.tab);
+                });
+            });
+
+            switchTab('inicio');
+
+            const cefrData = {
+                labels: ['Comprensión Auditiva', 'Comprensión Lectora', 'Interacción Oral', 'Producción Oral', 'Escritura'],
+                datasets: [
+                    {
+                        label: 'A2 (Básico)',
+                        data: [2, 2, 2, 2, 1],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                    },
+                    {
+                        label: 'B2 (Intermedio-Avanzado)',
+                        data: [4, 4, 4, 4, 3],
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        pointBackgroundColor: 'rgba(16, 185, 129, 1)',
+                    },
+                    {
+                        label: 'C2 (Maestría)',
+                        data: [5, 5, 5, 5, 5],
+                        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        pointBackgroundColor: 'rgba(239, 68, 68, 1)',
+                    }
+                ]
+            };
+
+            const cefrConfig = {
+                type: 'radar',
+                data: cefrData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { display: false },
+                            suggestedMin: 0,
+                            suggestedMax: 5,
+                            pointLabels: { font: { size: 12 } },
+                            ticks: {
+                                stepSize: 1,
+                                backdropColor: 'transparent'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const level = context.dataset.label;
+                                    const skill = context.label;
+                                    const value = context.raw;
+                                    let description = '';
+                                    if (level === 'A2 (Básico)') {
+                                        if (skill === 'Comprensión Auditiva') description = 'Entiende frases de temas cotidianos.';
+                                        if (skill === 'Comprensión Lectora') description = 'Lee textos cortos y simples.';
+                                        if (skill === 'Interacción Oral') description = 'Se comunica en tareas rutinarias.';
+                                        if (skill === 'Producción Oral') description = 'Describe actividades y emociones.';
+                                        if (skill === 'Escritura') description = 'Escribe notas y mensajes cortos.';
+                                    } else if (level === 'B2 (Intermedio-Avanzado)') {
+                                        if (skill === 'Comprensión Auditiva') description = 'Entiende discursos complejos.';
+                                        if (skill === 'Comprensión Lectora') description = 'Lee artículos sobre problemas actuales.';
+                                        if (skill === 'Interacción Oral') description = 'Conversa con fluidez con nativos.';
+                                        if (skill === 'Producción Oral') description = 'Hace presentaciones coherentes.';
+                                        if (skill === 'Escritura') description = 'Escribe textos detallados.';
+                                    } else if (level === 'C2 (Maestría)') {
+                                        description = 'Dominio completo y preciso en todas las áreas.';
+                                    }
+                                    return `${level} - ${skill}: ${description}`;
+                                }
+                            }
+                        }
+                    }
+                },
+            };
+
+            const cefrChartCtx = document.getElementById('cefrChart').getContext('2d');
+            new Chart(cefrChartCtx, cefrConfig);
+
+            const grammarData = [
+                {
+                    level: "A1-A2: Fundamentos",
+                    topics: [
+                        { title: "Verbo 'To Be' y Pronombres", content: "El verbo 'to be' (ser/estar) es esencial. <b>Ej:</b> <i>I am a student. She is not here. Are they ready?</i>" },
+                        { title: "Presente Simple vs. Continuo", content: "<b>Simple</b> para hábitos (<i>I work every day</i>), <b>Continuo</b> para acciones en progreso (<i>I am working now</i>)." },
+                        { title: "Pasado Simple", content: "Para acciones completadas en el pasado. <b>Ej:</b> <i>We visited Paris last year.</i>" },
+                        { title: "Futuro con 'Will' y 'Going to'", content: "<b>Will</b> para decisiones espontáneas (<i>I'll have the salad</i>), <b>Going to</b> para planes (<i>I'm going to travel</i>)." }
+                    ]
+                },
+                {
+                    level: "B1-B2: Precisión y Matices",
+                    topics: [
+                        { title: "Tiempos Perfectos", content: "Conectan el pasado con el presente. <b>Ej:</b> <i>I have finished my work.</i> (Presente Perfecto). <i>She had already left when I arrived.</i> (Pasado Perfecto)." },
+                        { title: "Verbos Modales", content: "Expresan posibilidad, obligación, etc. <b>Ej:</b> <i>You <b>should</b> study. It <b>might</b> rain. We <b>must</b> leave.</i>" },
+                        { title: "Condicionales (Tipo 1, 2, 3)", content: "<b>Tipo 1 (Real):</b> <i>If it rains, I will stay home.</i><br><b>Tipo 2 (Irreal):</b> <i>If I had money, I would travel.</i><br><b>Tipo 3 (Pasado Irreal):</b> <i>If I had studied, I would have passed.</i>" },
+                        { title: "Voz Pasiva", content: "El énfasis está en la acción, no en quién la realiza. <b>Ej:</b> <i>The book was written by a famous author.</i>" }
+                    ]
+                },
+                {
+                    level: "C1-C2: Maestría y Sofisticación",
+                    topics: [
+                        { title: "Inversiones Gramaticales", content: "Para dar énfasis y en contextos formales. <b>Ej:</b> <i><b>Never have I seen</b> such a beautiful sunset.</i> (En lugar de <i>I have never seen...</i>)" },
+                        { title: "Condicionales Mixtas", content: "Combinan diferentes tipos. <b>Ej:</b> <i>If I had taken that job, I would be rich now.</i> (Condición pasada, resultado presente)." },
+                        { title: "Expresiones con 'Wish' / 'If only'", content: "Para expresar deseos o arrepentimientos. <b>Ej:</b> <i>I wish I knew the answer. If only I had listened to you.</i>" }
+                    ]
+                }
+            ];
+
+            const grammarContainer = document.getElementById('grammar-content');
+            grammarData.forEach(level => {
+                const levelDiv = document.createElement('div');
+                levelDiv.className = 'card p-6';
+                const levelTitle = document.createElement('h3');
+                levelTitle.className = 'text-2xl font-semibold text-blue-600 mb-4';
+                levelTitle.textContent = level.level;
+                levelDiv.appendChild(levelTitle);
+
+                level.topics.forEach(topic => {
+                    const accordionButton = document.createElement('button');
+                    accordionButton.className = 'w-full text-left p-4 bg-gray-100 hover:bg-gray-200 rounded-lg flex justify-between items-center font-semibold';
+                    accordionButton.innerHTML = `<span>${topic.title}</span><span class="transform transition-transform duration-300">▼</span>`;
+
+                    const accordionContent = document.createElement('div');
+                    accordionContent.className = 'accordion-content p-4 bg-white border border-t-0 rounded-b-lg';
+                    accordionContent.innerHTML = topic.content;
+
+                    accordionButton.addEventListener('click', () => {
+                        const icon = accordionButton.querySelector('span:last-child');
+                        if (accordionContent.style.maxHeight) {
+                            accordionContent.style.maxHeight = null;
+                            icon.style.transform = 'rotate(0deg)';
+                        } else {
+                            accordionContent.style.maxHeight = accordionContent.scrollHeight + "px";
+                            icon.style.transform = 'rotate(180deg)';
+                        }
+                    });
+
+                    levelDiv.appendChild(accordionButton);
+                    levelDiv.appendChild(accordionContent);
+                });
+                grammarContainer.appendChild(levelDiv);
+            });
+
+            const falseFriends = [
+                { term: 'Actually', meaning: 'Significa "de hecho" o "en realidad", NO "actualmente" (currently).', example: 'I thought he was shy, but actually he\'s very outgoing.' },
+                { term: 'Embarrassed', meaning: 'Significa "avergonzado", NO "embarazada" (pregnant).', example: 'She was so embarrassed when she forgot his name.' },
+                { term: 'Fabric', meaning: 'Significa "tela" o "tejido", NO "fábrica" (factory).', example: 'This shirt is made of a very soft fabric.' },
+                { term: 'Library', meaning: 'Significa "biblioteca", NO "librería" (bookstore).', example: 'I need to return these books to the library.' },
+                { term: 'Assist', meaning: 'Significa "ayudar", NO "asistir" a un evento (attend).', example: 'Can I assist you with your bags?' },
+                { term: 'Success', meaning: 'Significa "éxito", NO "suceso" (event).', example: 'The project was a great success.' }
+            ];
+            const falseFriendsGrid = document.getElementById('false-friends-grid');
+            falseFriends.forEach(ff => {
+                const card = document.createElement('div');
+                card.className = 'card p-4';
+                card.innerHTML = `
+                    <h4 class="font-bold text-lg text-red-600">${ff.term}</h4>
+                    <p class="text-gray-700">${ff.meaning}</p>
+                    <p class="text-sm text-gray-500 mt-2 italic">Ej: ${ff.example}</p>
+                `;
+                falseFriendsGrid.appendChild(card);
+            });
+
+            const idioms = [
+                { front: "A piece of cake", back: "Algo muy fácil de hacer. <br><i>Ej: The exam was a piece of cake.</i>" },
+                { front: "Break a leg", back: "Desear buena suerte. <br><i>Ej: Break a leg in your performance tonight!</i>" },
+                { front: "Hit the nail on the head", back: "Acertar, decir exactamente lo correcto. <br><i>Ej: You hit the nail on the head with that analysis.</i>" },
+                { front: "Spill the beans", back: "Revelar un secreto. <br><i>Ej: Come on, spill the beans! Who is she dating?</i>" },
+                { front: "Under the weather", back: "Sentirse enfermo o indispuesto. <br><i>Ej: I'm feeling a bit under the weather today.</i>" },
+                { front: "The ball is in your court", back: "Es tu turno de actuar o decidir. <br><i>Ej: I've done my part, now the ball is in your court.</i>" }
+            ];
+            const idiomsGrid = document.getElementById('idioms-grid');
+            idioms.forEach(idiom => {
+                const card = document.createElement('div');
+                card.className = 'flip-card h-40 cursor-pointer';
+                card.innerHTML = `
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <h4 class="text-xl font-semibold text-gray-800">${idiom.front}</h4>
+                        </div>
+                        <div class="flip-card-back">
+                            <p>${idiom.back}</p>
+                        </div>
+                    </div>
+                `;
+                card.addEventListener('click', () => card.classList.toggle('flipped'));
+                idiomsGrid.appendChild(card);
+            });
+
+            const phrasalVerbs = [
+                { verb: "Get on", meaning: "Subir (a un transporte); Progresar." }, { verb: "Get over", meaning: "Superar (una enfermedad o problema)." },
+                { verb: "Get up", meaning: "Levantarse." }, { verb: "Take off", meaning: "Despegar (avión); Quitarse (ropa)." },
+                { verb: "Take on", meaning: "Aceptar (un reto o responsabilidad)." }, { verb: "Take over", meaning: "Tomar el control." },
+                { verb: "Look up", meaning: "Buscar información." }, { verb: "Look after", meaning: "Cuidar de alguien." },
+                { verb: "Look forward to", meaning: "Esperar con ilusión." }, { verb: "Go on", meaning: "Continuar; Suceder." },
+                { verb: "Go over", meaning: "Repasar." }, { verb: "Go off", meaning: "Sonar (alarma); Explotar; Ponerse malo (comida)." },
+                { verb: "Come across", meaning: "Encontrar por casualidad." }, { verb: "Come up with", meaning: "Idear, proponer (una idea)." },
+                { verb: "Turn down", meaning: "Rechazar; Bajar el volumen." }, { verb: "Turn up", meaning: "Aparecer; Subir el volumen." },
+                { verb: "Make up", meaning: "Inventar; Hacer las paces; Maquillarse." }, { verb: "Make out", meaning: "Distinguir; Besarse." },
+                { verb: "Bring up", meaning: "Criar a un niño; Mencionar un tema." }, { verb: "Call off", meaning: "Cancelar." },
+                { verb: "Check in", meaning: "Registrarse." }, { verb: "Check out", meaning: "Pagar e irse (hotel); Echar un vistazo." },
+                { verb: "Drop off", meaning: "Dejar a alguien en un lugar." }, { verb: "Drop out", meaning: "Abandonar (estudios)." },
+                { verb: "Work out", meaning: "Hacer ejercicio; Funcionar, resolverse." }
+            ];
+            const phrasalVerbList = document.getElementById('phrasal-verb-list');
+            const phrasalVerbSearch = document.getElementById('phrasal-verb-search');
+
+            function renderPhrasalVerbs(filter = '') {
+                phrasalVerbList.innerHTML = '';
+                const filteredVerbs = phrasalVerbs.filter(pv => pv.verb.toLowerCase().includes(filter.toLowerCase()));
+                if (filteredVerbs.length === 0) {
+                    phrasalVerbList.innerHTML = '<li class="text-gray-500">No se encontraron resultados.</li>';
+                    return;
+                }
+                filteredVerbs.forEach(pv => {
+                    const li = document.createElement('li');
+                    li.className = 'p-3 bg-gray-50 rounded-lg flex justify-between items-center';
+                    li.innerHTML = `
+                        <span class="font-semibold text-gray-800">${pv.verb}</span>
+                        <span class="text-gray-600 text-right">${pv.meaning}</span>
+                    `;
+                    phrasalVerbList.appendChild(li);
+                });
+            }
+            phrasalVerbSearch.addEventListener('input', (e) => renderPhrasalVerbs(e.target.value));
+            renderPhrasalVerbs();
+
+            const skillsData = {
+                listening: {
+                    title: "🎧 Mejora del Listening",
+                    points: [
+                        "<b>Inmersión auditiva:</b> Escucha podcasts, música y noticias en inglés.",
+                        "<b>Series y películas:</b> Empieza con subtítulos en español, luego en inglés y finalmente sin ellos.",
+                        "<b>Escucha activa:</b> Anota frases y palabras nuevas que escuches.",
+                        "<b>Variedad de acentos:</b> Expón tu oído a inglés británico, americano, australiano, etc."
+                    ]
+                },
+                speaking: {
+                    title: "💬 Mejora del Speaking",
+                    points: [
+                        "<b>Habla todos los días:</b> Aunque sea contigo mismo. Narra lo que haces.",
+                        "<b>Grábate:</b> Escucha tu propia voz para corregir pronunciación y entonación.",
+                        "<b>Shadowing:</b> Imita a hablantes nativos para captar el ritmo y la melodía del idioma.",
+                        "<b>Piensa en inglés:</b> Evita traducir desde el español. Formula tus ideas directamente en inglés."
+                    ]
+                },
+                reading: {
+                    title: "📖 Mejora del Reading",
+                    points: [
+                        "<b>Lee material de tu interés:</b> Blogs, noticias, novelas. Empieza con textos adaptados a tu nivel.",
+                        "<b>Lee en voz alta:</b> Mejora tu pronunciación y la velocidad de procesamiento.",
+                        "<b>No traduzcas todo:</b> Intenta deducir el significado por el contexto.",
+                        "<b>Amplía tu vocabulario:</b> Anota las palabras desconocidas y búscalas."
+                    ]
+                },
+                writing: {
+                    title: "✍️ Mejora del Writing",
+                    points: [
+                        "<b>Escribe a diario:</b> Un diario, un blog, correos electrónicos. La práctica hace al maestro.",
+                        "<b>Usa herramientas de corrección:</b> Grammarly o Hemingway te ayudan a pulir tus textos.",
+                        "<b>Aprende conectores:</b> Usa 'however', 'therefore', 'moreover' para dar cohesión a tus ideas.",
+                        "<b>Pide feedback:</b> Pide a un nativo o profesor que revise tus escritos."
+                    ]
+                }
+            };
+            document.getElementById('listening-skills').innerHTML = `
+                <h3 class="text-2xl font-semibold text-gray-700 mb-4">${skillsData.listening.title}</h3>
+                <ul class="space-y-3 list-inside">${skillsData.listening.points.map(p => `<li class="text-gray-600">${p}</li>`).join('')}</ul>`;
+            document.getElementById('speaking-skills').innerHTML = `
+                <h3 class="text-2xl font-semibold text-gray-700 mb-4">${skillsData.speaking.title}</h3>
+                <ul class="space-y-3 list-inside">${skillsData.speaking.points.map(p => `<li class="text-gray-600">${p}</li>`).join('')}</ul>`;
+            document.getElementById('reading-skills').innerHTML = `
+                <h3 class="text-2xl font-semibold text-gray-700 mb-4">${skillsData.reading.title}</h3>
+                <ul class="space-y-3 list-inside">${skillsData.reading.points.map(p => `<li class="text-gray-600">${p}</li>`).join('')}</ul>`;
+            document.getElementById('writing-skills').innerHTML = `
+                <h3 class="text-2xl font-semibold text-gray-700 mb-4">${skillsData.writing.title}</h3>
+                <ul class="space-y-3 list-inside">${skillsData.writing.points.map(p => `<li class="text-gray-600">${p}</li>`).join('')}</ul>`;
+
+            const commonErrors = [
+                { title: 'Sujeto Obligatorio', incorrect: 'Is raining.', correct: '<b>It</b> is raining.' },
+                { title: 'Adjetivos sin Plural', incorrect: 'The cars are <b>reds</b>.', correct: 'The cars are <b>red</b>.' },
+                { title: 'Edad con "To Be"', incorrect: 'I <b>have</b> 25 years.', correct: 'I <b>am</b> 25 years old.' },
+                { title: '"S" en 3ª Persona', incorrect: 'He <b>play</b> football.', correct: 'He <b>plays</b> football.' },
+                { title: 'Orden de Palabras', incorrect: 'I yesterday bought a car.', correct: 'I bought a car yesterday.' },
+                { title: 'Make vs. Do', incorrect: 'I need to <b>make</b> my homework.', correct: 'I need to <b>do</b> my homework.' }
+            ];
+            const commonErrorsGrid = document.getElementById('common-errors-grid');
+            commonErrors.forEach(error => {
+                const card = document.createElement('div');
+                card.className = 'card p-4 text-center cursor-pointer';
+                card.innerHTML = `
+                    <h4 class="font-semibold mb-2">${error.title}</h4>
+                    <div class="text-red-500 line-through mb-2">❌ ${error.incorrect}</div>
+                    <div class="text-green-600 font-bold">✔️ ${error.correct}</div>
+                `;
+                commonErrorsGrid.appendChild(card);
+            });
+
+            const cultureData = [
+                { title: "Humor y Sarcasmo", content: "El <b>humor británico</b> es conocido por ser seco e irónico. Una frase como 'Brilliant!' puede significar lo contrario. El <b>humor americano</b> tiende a ser más directo y explícito." },
+                { title: "Cumplidos y Modestia", content: "En <b>EE.UU.</b>, es normal aceptar un cumplido con un simple 'Thank you'. En el <b>Reino Unido</b>, es más común minimizar el cumplido: 'Oh, this old thing?' para no parecer arrogante." },
+                { title: "Comunicación No Verbal", content: "El <b>contacto visual directo</b> en EE.UU. y Canadá es señal de honestidad. En otras culturas puede variar. Los gestos también cambian; el signo de 'OK' con los dedos puede ser ofensivo en algunos países." },
+                { title: "Formalidad y Nombres", content: "En contextos de negocios en EE.UU., es común pasar rápidamente a usar el nombre de pila. En otras culturas, como la británica o la japonesa, se mantiene el uso de apellidos y títulos (Mr., Ms.) por más tiempo como señal de respeto." }
+            ];
+            const cultureContainer = document.getElementById('culture-content');
+            cultureData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card p-6';
+                card.innerHTML = `
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">${item.title}</h3>
+                    <p class="text-gray-600">${item.content}</p>
+                `;
+                cultureContainer.appendChild(card);
+            });
+
+        });
+    </script>
+</body>
+
+</html>

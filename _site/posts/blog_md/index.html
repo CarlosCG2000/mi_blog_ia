@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva para Crear tu Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Teal Accent -->
+    <!-- Application Structure Plan: The SPA is structured as a learning dashboard with four main sections: 'Choose Your Path', 'Hugo Quickstart', 'Core Workflow', and 'Publish'. This thematic, non-linear structure allows users to either follow a guided path or jump directly to the section that answers their immediate question (e.g., "how do I add posts?"). This is more user-friendly than a linear report, as it supports both learning from scratch and quick reference. Key interactions include a comparative chart, interactive code snippets, and a simulated workflow diagram to make abstract concepts tangible. -->
+    <!-- Visualization & Content Choices:
+        - Choose Your Path: Goal: Compare blogging platforms. Method: A radar chart to visually compare WordPress, SSG, and Headless CMS on key metrics (Ease of Use, Speed, Security, Cost). Justification: A radar chart is excellent for multi-attribute comparison, offering a quick visual summary that's more impactful than a table. Library: Chart.js.
+        - Hugo Quickstart: Goal: Guide installation. Method: Interactive tabs for different OS (macOS/Windows) with copyable code blocks. Justification: Organizes platform-specific info cleanly and improves usability with one-click copy.
+        - Core Workflow: Goal: Explain how to add articles. Method: An interactive HTML/CSS diagram simulating the process. A toggle switch for 'draft' status will visually add/remove a post from a list. Justification: This directly demonstrates the "magic" of how Hugo works, making the core concept of automated list generation clear and concrete.
+        - Publish: Goal: Explain deployment. Method: A simple, visual flowchart made with HTML/Tailwind. Justification: Visualizes the CI/CD pipeline, demystifying the deployment process.
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F5F4;
+            /* stone-100 */
+            color: #44403C;
+            /* stone-700 */
+        }
+
+        .nav-button {
+            transition: all 0.3s ease;
+            border-bottom: 4px solid transparent;
+        }
+
+        .nav-button.active {
+            border-bottom-color: #0D9488;
+            /* teal-600 */
+            color: #0F766E;
+            /* teal-700 */
+        }
+
+        .nav-button:hover {
+            background-color: #E7E5E4;
+            /* stone-200 */
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .code-block {
+            background-color: #292524;
+            /* stone-800 */
+            color: #F5F5F4;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 0.875rem;
+            position: relative;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #57534E;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .copy-button:hover {
+            background-color: #44403C;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 450px;
+        }
+
+        .tab-button {
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        }
+
+        .tab-button.active {
+            background-color: #0D9488;
+            color: white;
+        }
+
+        .toggle-bg:after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            background-color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        input:checked+.toggle-bg:after {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <div class="min-h-screen container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-teal-800">Crea tu Primer Blog</h1>
+            <p class="mt-4 text-lg text-stone-600 max-w-3xl mx-auto">Una guía interactiva para construir y mantener tu
+                blog de forma sencilla, rápida y segura.</p>
+        </header>
+
+        <nav class="flex flex-wrap justify-center border-b-2 border-stone-200 mb-8">
+            <button id="nav-path" class="nav-button active text-sm sm:text-base font-semibold py-4 px-3 sm:px-6"
+                data-section="path">🧭 Elige tu Camino</button>
+            <button id="nav-hugo" class="nav-button text-sm sm:text-base font-semibold py-4 px-3 sm:px-6"
+                data-section="hugo">🚀 Guía Rápida: Hugo</button>
+            <button id="nav-workflow" class="nav-button text-sm sm:text-base font-semibold py-4 px-3 sm:px-6"
+                data-section="workflow">✍️ Tu Flujo de Trabajo</button>
+            <button id="nav-publish" class="nav-button text-sm sm:text-base font-semibold py-4 px-3 sm:px-6"
+                data-section="publish">☁️ Publica tu Blog</button>
+        </nav>
+
+        <main id="content-container">
+            <!-- Sección 1: Elige tu Camino -->
+            <section id="section-path" class="space-y-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-stone-800">¿Qué herramienta es para ti?</h2>
+                    <p class="mt-2 max-w-2xl mx-auto text-stone-600">Antes de empezar, es crucial entender las opciones.
+                        Cada enfoque tiene sus ventajas. Este gráfico compara las tres filosofías principales para
+                        ayudarte a tomar una decisión informada.</p>
+                </div>
+                <div class="card p-6">
+                    <div class="chart-container">
+                        <canvas id="platformChart"></canvas>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6 text-center">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold text-teal-700 mb-2">WordPress</h3>
+                        <p class="text-stone-600 text-sm">El "todo en uno". Ideal si buscas una experiencia 100% visual
+                            con un editor de arrastrar y soltar. Su mayor ventaja es la facilidad de uso para no
+                            programadores, pero requiere más mantenimiento.</p>
+                    </div>
+                    <div class="card p-6 border-2 border-teal-500">
+                        <h3 class="text-xl font-semibold text-teal-700 mb-2">Sitio Estático (Hugo)</h3>
+                        <p class="text-stone-600 text-sm">El campeón del rendimiento. Genera un sitio web de archivos
+                            HTML puros, lo que lo hace increíblemente rápido y seguro. El mantenimiento es mínimo.
+                            **Esta es la opción recomendada.**</p>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold text-teal-700 mb-2">CMS Headless + SSG</h3>
+                        <p class="text-stone-600 text-sm">La opción más flexible y escalable. Combina una interfaz de
+                            gestión de contenido amigable con la velocidad de un sitio estático. Ideal para proyectos
+                            que crecerán o necesitarán un equipo de editores.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección 2: Guía Rápida: Hugo -->
+            <section id="section-hugo" class="hidden space-y-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-stone-800">Empezando con Hugo en 3 Pasos</h2>
+                    <p class="mt-2 max-w-2xl mx-auto text-stone-600">Hugo es la herramienta recomendada por su increíble
+                        velocidad, seguridad y simplicidad. Sigue estos pasos para tener tu blog listo en minutos.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="card p-6">
+                        <div class="flex items-center mb-4"><span class="text-3xl mr-4">1️⃣</span>
+                            <h3 class="text-xl font-semibold text-teal-700">Instala Hugo</h3>
+                        </div>
+                        <p class="text-stone-600 mb-4">Usa un gestor de paquetes para instalar Hugo con un solo comando.
+                        </p>
+                        <div class="flex border border-stone-200 rounded-lg p-1 bg-stone-100 mb-4">
+                            <button class="tab-button active w-1/2 py-2 rounded-md text-sm font-medium"
+                                data-os="mac">macOS</button>
+                            <button class="tab-button w-1/2 py-2 rounded-md text-sm font-medium"
+                                data-os="win">Windows</button>
+                        </div>
+                        <div id="code-mac" class="code-block" data-code="brew install hugo">brew install hugo</div>
+                        <div id="code-win" class="hidden code-block" data-code="choco install hugo-extended">choco
+                            install hugo-extended</div>
+                    </div>
+                    <div class="card p-6">
+                        <div class="flex items-center mb-4"><span class="text-3xl mr-4">2️⃣</span>
+                            <h3 class="text-xl font-semibold text-teal-700">Crea tu Sitio</h3>
+                        </div>
+                        <p class="text-stone-600 mb-4">Este comando crea una nueva carpeta con toda la estructura
+                            necesaria para tu blog.</p>
+                        <div class="code-block" data-code="hugo new site mi-blog">hugo new site mi-blog</div>
+                    </div>
+                    <div class="card p-6">
+                        <div class="flex items-center mb-4"><span class="text-3xl mr-4">3️⃣</span>
+                            <h3 class="text-xl font-semibold text-teal-700">Añade un Tema</h3>
+                        </div>
+                        <p class="text-stone-600 mb-4">Un tema le da a tu sitio su diseño. Lo instalamos y luego lo
+                            activamos en el archivo de configuración.</p>
+                        <div class="code-block mb-2"
+                            data-code="git submodule add https://github.com/theNewDynamic/gohugo-theme-ananke.git themes/ananke">
+                            git submodule add ... themes/ananke</div>
+                        <div class="code-block" data-code="theme = 'ananke'"># En hugo.toml
+                            theme = 'ananke'</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección 3: Tu Flujo de Trabajo -->
+            <section id="section-workflow" class="hidden space-y-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-stone-800">Añadiendo Artículos: Tu Rutina Diaria</h2>
+                    <p class="mt-2 max-w-2xl mx-auto text-stone-600">Esta es la parte más importante. Verás lo sencillo
+                        que es crear, escribir y publicar nuevos artículos. Este es el flujo de trabajo que usarás una y
+                        otra vez.</p>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold text-teal-700 mb-4">El Proceso en 3 Pasos Visualizado</h3>
+                    <div class="grid md:grid-cols-3 gap-6 items-center text-center">
+                        <div class="p-4 bg-stone-100 rounded-lg">
+                            <p class="font-mono text-teal-600 text-sm">hugo new content posts/...</p>
+                            <p class="mt-2 font-semibold">1. Crear Artículo</p>
+                            <p class="text-xs text-stone-500">Un comando crea el archivo por ti.</p>
+                        </div>
+                        <div class="text-2xl text-stone-400 font-sans">&rarr;</div>
+                        <div class="p-4 bg-stone-100 rounded-lg">
+                            <p class="font-mono text-teal-600 text-sm">draft: false</p>
+                            <p class="mt-2 font-semibold">2. Escribir y Publicar</p>
+                            <p class="text-xs text-stone-500">Escribe en Markdown y cambia una línea para publicar.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold text-teal-700 mb-4">Demostración Interactiva: La Magia de Hugo</h3>
+                    <p class="text-stone-600 mb-6">A la izquierda, tienes el "front matter" de un archivo de artículo. A
+                        la derecha, la lista de publicaciones de tu blog. Activa el interruptor para cambiar `draft` de
+                        `true` a `false` y observa cómo Hugo añade automáticamente el enlace a la lista.</p>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="bg-stone-100 p-4 rounded-lg">
+                            <h4 class="font-semibold text-center mb-2">📄 content/posts/nuevo-post.md</h4>
+                            <div class="code-block">
+                                +++<br>
+                                title = "Mi Nuevo Post Increíble"<br>
+                                date = 2025-08-12T12:14:00+02:00<br>
+                                draft = <span id="draft-status" class="text-yellow-400">true</span><br>
+                                +++
+                            </div>
+                            <div class="mt-4 flex items-center justify-center">
+                                <span class="mr-3 font-medium text-stone-600">Borrador</span>
+                                <label for="toggle-draft" class="flex items-center cursor-pointer">
+                                    <div class="relative">
+                                        <input type="checkbox" id="toggle-draft" class="sr-only">
+                                        <div class="block bg-stone-300 w-12 h-6 rounded-full toggle-bg"></div>
+                                    </div>
+                                </label>
+                                <span class="ml-3 font-medium text-teal-600">Publicado</span>
+                            </div>
+                        </div>
+                        <div class="bg-stone-100 p-4 rounded-lg">
+                            <h4 class="font-semibold text-center mb-2">🌐 Página Principal del Blog</h4>
+                            <ul id="post-list" class="list-disc list-inside space-y-2 p-4 bg-white rounded">
+                                <li><a href="#" class="text-blue-600 hover:underline">Un artículo antiguo</a></li>
+                                <li id="new-post-item" class="hidden opacity-0 transition-opacity duration-500"><a
+                                        href="#" class="text-blue-600 hover:underline">Mi Nuevo Post Increíble</a></li>
+                            </ul>
+                            <p class="text-xs text-stone-500 mt-4 text-center">Hugo usa una plantilla con un bucle `` para generar esta lista automáticamente a partir de tus archivos.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección 4: Publica tu Blog -->
+            <section id="section-publish" class="hidden space-y-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-stone-800">Comparte tu Blog con el Mundo</h2>
+                    <p class="mt-2 max-w-2xl mx-auto text-stone-600">Lanzar tu sitio estático es fácil y, a menudo,
+                        gratuito. Este es el flujo de trabajo moderno que usan los profesionales, simplificado para ti.
+                    </p>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold text-teal-700 mb-6 text-center">El Flujo de Despliegue Automatizado
+                    </h3>
+                    <div
+                        class="flex flex-col md:flex-row items-center justify-around space-y-4 md:space-y-0 md:space-x-4">
+                        <div class="text-center">
+                            <div class="text-6xl">💻</div>
+                            <p class="font-semibold mt-2">1. Tu Ordenador</p>
+                            <p class="text-sm text-stone-500">Escribes tu artículo.</p>
+                        </div>
+                        <div class="text-3xl text-stone-400 font-sans">&rarr;</div>
+                        <div class="text-center">
+                            <div class="text-6xl">📦</div>
+                            <p class="font-semibold mt-2">2. GitHub</p>
+                            <p class="text-sm text-stone-500">Subes tus cambios.</p>
+                        </div>
+                        <div class="text-3xl text-stone-400 font-sans">&rarr;</div>
+                        <div class="text-center">
+                            <div class="text-6xl">⚙️</div>
+                            <p class="font-semibold mt-2">3. Netlify</p>
+                            <p class="text-sm text-stone-500">Detecta el cambio, construye y publica.</p>
+                        </div>
+                        <div class="text-3xl text-stone-400 font-sans">&rarr;</div>
+                        <div class="text-center">
+                            <div class="text-6xl">🌍</div>
+                            <p class="font-semibold mt-2">4. Internet</p>
+                            <p class="text-sm text-stone-500">¡Tu blog está en línea!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold text-teal-700 mb-4">Guía Rápida de Despliegue con Netlify</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-stone-600">
+                        <li>Sube el código de tu proyecto a un repositorio nuevo en <strong>GitHub</strong>.</li>
+                        <li>Crea una cuenta en <strong>Netlify</strong> (puedes usar tu cuenta de GitHub).</li>
+                        <li>En Netlify, haz clic en "Add new site" &rarr; "Import an existing project" y selecciona tu
+                            repositorio.</li>
+                        <li>Netlify detectará que es un sitio de Hugo. Acepta la configuración por defecto y haz clic en
+                            <strong>"Deploy site"</strong>.
+                        </li>
+                        <li>¡Listo! Netlify te dará una URL y actualizará tu sitio automáticamente cada vez que subas
+                            cambios a GitHub.</li>
+                    </ol>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navButtons = document.querySelectorAll('.nav-button');
+            const sections = {
+                path: document.getElementById('section-path'),
+                hugo: document.getElementById('section-hugo'),
+                workflow: document.getElementById('section-workflow'),
+                publish: document.getElementById('section-publish'),
+            };
+
+            function switchSection(sectionId) {
+                Object.values(sections).forEach(section => section.classList.add('hidden'));
+                navButtons.forEach(btn => btn.classList.remove('active'));
+
+                sections[sectionId].classList.remove('hidden');
+                document.getElementById(`nav-${sectionId}`).classList.add('active');
+            }
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    switchSection(button.dataset.section);
+                });
+            });
+
+            const osTabs = document.querySelectorAll('.tab-button');
+            osTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const os = tab.dataset.os;
+                    osTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    if (os === 'mac') {
+                        document.getElementById('code-mac').classList.remove('hidden');
+                        document.getElementById('code-win').classList.add('hidden');
+                    } else {
+                        document.getElementById('code-mac').classList.add('hidden');
+                        document.getElementById('code-win').classList.remove('hidden');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.code-block').forEach(block => {
+                const code = block.dataset.code;
+                if (!code) return;
+                const button = document.createElement('button');
+                button.innerHTML = 'Copiar';
+                button.className = 'copy-button';
+                block.appendChild(button);
+                button.addEventListener('click', () => {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = code;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        button.innerHTML = '¡Copiado!';
+                        setTimeout(() => { button.innerHTML = 'Copiar'; }, 2000);
+                    } catch (err) {
+                        console.error('Error al copiar', err);
+                    }
+                    document.body.removeChild(textArea);
+                });
+            });
+
+            const draftToggle = document.getElementById('toggle-draft');
+            const draftStatus = document.getElementById('draft-status');
+            const newPostItem = document.getElementById('new-post-item');
+
+            draftToggle.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    draftStatus.textContent = 'false';
+                    draftStatus.classList.remove('text-yellow-400');
+                    draftStatus.classList.add('text-green-400');
+                    newPostItem.classList.remove('hidden');
+                    setTimeout(() => newPostItem.classList.remove('opacity-0'), 10);
+                } else {
+                    draftStatus.textContent = 'true';
+                    draftStatus.classList.remove('text-green-400');
+                    draftStatus.classList.add('text-yellow-400');
+                    newPostItem.classList.add('opacity-0');
+                    setTimeout(() => newPostItem.classList.add('hidden'), 500);
+                }
+            });
+
+            const radarCtx = document.getElementById('platformChart').getContext('2d');
+            new Chart(radarCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Facilidad (No-Dev)', 'Velocidad', 'Seguridad', 'Bajo Mantenimiento', 'Flexibilidad', 'Bajo Costo'],
+                    datasets: [{
+                        label: 'WordPress',
+                        data: [5, 2, 2, 1, 4, 3],
+                        fill: true,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        pointBackgroundColor: 'rgb(255, 99, 132)',
+                    }, {
+                        label: 'Sitio Estático (Hugo)',
+                        data: [3, 5, 5, 5, 4, 5],
+                        fill: true,
+                        backgroundColor: 'rgba(20, 184, 166, 0.2)',
+                        borderColor: 'rgb(20, 184, 166)',
+                        pointBackgroundColor: 'rgb(20, 184, 166)',
+                    }, {
+                        label: 'Headless + SSG',
+                        data: [4, 5, 5, 4, 5, 4],
+                        fill: true,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        pointBackgroundColor: 'rgb(54, 162, 235)',
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#E7E5E4' },
+                            grid: { color: '#E7E5E4' },
+                            pointLabels: { font: { size: 12 }, color: '#57534E' },
+                            ticks: {
+                                backdropColor: '#F5F5F4',
+                                color: '#78716C',
+                                stepSize: 1
+                            },
+                            min: 0,
+                            max: 5
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#44403C'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

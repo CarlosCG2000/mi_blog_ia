@@ -1,0 +1,468 @@
+---
+title: "Panel Interactivo: Guía de Blogs Automatizados"
+date: 2025-08-12
+image: "https://images.unsplash.com/photo-1592609931095-54a2168ae893?q=80&w=1740&auto=format&fit=crop"
+tags: ["post"]
+layout: false
+templateEngine: false
+---
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Interactivo: Guía de Blogs Automatizados</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The SPA is designed as a guided journey. It starts with a "Why" (benefits), moves to the "What" (tool comparison), then the "How" (tutorial), and finally the "Where" (deployment). This task-oriented flow is more intuitive for a user wanting to learn and build than the original report's linear structure. Key interactions include a dynamic radar chart for comparing SSGs, which is more engaging than a static table, and a tabbed interface for the tutorial to break down the process into manageable steps. This structure prioritizes user understanding and actionability. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: SSG Comparison Table -> Goal: Compare -> Viz: Interactive Radar Chart -> Interaction: Click on SSG card to update chart data -> Justification: A radar chart provides a much clearer multi-dimensional comparison than a table, making the strengths/weaknesses of each tool immediately apparent. -> Library: Chart.js (Canvas).
+        - Report Info: Eleventy Tutorial Steps -> Goal: Guide -> Viz: Tabbed Interface -> Interaction: Click tabs to reveal step-by-step content and code -> Justification: Breaks a complex process into digestible chunks, reducing cognitive load and improving learning flow. -> Library/Method: Vanilla JS + Tailwind CSS.
+        - Report Info: Deployment Process -> Goal: Explain a flow -> Viz: HTML/CSS Flowchart -> Interaction: Hover effects -> Justification: A visual diagram is more intuitive for understanding a sequence of events than a text list. -> Library/Method: Tailwind CSS Flexbox.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFDFB;
+            color: #333;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 45vh;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        .nav-link {
+            transition: color 0.3s, border-color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #D97706;
+        }
+
+        .active-nav {
+            color: #D97706;
+            border-bottom-color: #D97706;
+        }
+
+        .tab-button.active {
+            background-color: #FBBF24;
+            color: #422006;
+        }
+
+        .ssg-card.active {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            border-color: #FBBF24;
+        }
+    </style>
+</head>
+
+<body class="bg-amber-50/50">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-amber-900">Blog Automatizado</a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#por-que" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Conceptos</a>
+                <a href="#comparativa" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Comparativa</a>
+                <a href="#tutorial" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Tutorial</a>
+                <a href="#despliegue" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Despliegue</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="py-20 md:py-32 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-amber-900 leading-tight">Publica en tu blog con solo
+                    un archivo.</h1>
+                <p class="mt-4 text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">Descubre cómo la arquitectura moderna
+                    de sitios estáticos te permite crear blogs increíblemente rápidos, seguros y con un flujo de trabajo
+                    de publicación totalmente automatizado.</p>
+            </div>
+        </section>
+
+        <section id="por-que" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-amber-900">¿Por Qué un Blog Estático?</h2>
+                    <p class="mt-3 text-gray-600 max-w-2xl mx-auto">Los Generadores de Sitios Estáticos (SSG) ofrecen
+                        una trifecta de beneficios que superan a los sistemas tradicionales como WordPress para la
+                        mayoría de los blogs y sitios de contenido.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="bg-white p-8 rounded-xl shadow-md">
+                        <div class="text-5xl text-amber-500 mb-4">🚀</div>
+                        <h3 class="text-xl font-bold text-amber-900 mb-2">Velocidad Insuperable</h3>
+                        <p class="text-gray-600">Las páginas se pre-generan como archivos HTML, sirviéndose casi
+                            instantáneamente desde una CDN global. Esto mejora la experiencia de usuario y el SEO.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-md">
+                        <div class="text-5xl text-amber-500 mb-4">🛡️</div>
+                        <h3 class="text-xl font-bold text-amber-900 mb-2">Seguridad Reforzada</h3>
+                        <p class="text-gray-600">Sin bases de datos ni procesamiento en el servidor en tiempo real, se
+                            elimina una enorme superficie de ataque, haciendo tu sitio inherentemente más seguro.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-md">
+                        <div class="text-5xl text-amber-500 mb-4">✨</div>
+                        <h3 class="text-xl font-bold text-amber-900 mb-2">Simplicidad y Control</h3>
+                        <p class="text-gray-600">Todo tu contenido vive en archivos de texto gestionados con Git.
+                            Disfruta de un historial completo, colaboración sencilla y despliegues atómicos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparativa" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-amber-900">Elige tu Herramienta</h2>
+                    <p class="mt-3 text-gray-600 max-w-2xl mx-auto">Cada generador tiene su propia filosofía. Compara
+                        sus características para encontrar el que mejor se adapte a tu estilo de trabajo. Haz clic en
+                        una tarjeta para ver sus datos en el gráfico.</p>
+                </div>
+                <div class="flex flex-col lg:flex-row gap-8 items-center">
+                    <div class="w-full lg:w-1/3 space-y-4">
+                        <div id="ssg-eleventy"
+                            class="ssg-card bg-white p-6 rounded-xl shadow-md border-2 border-transparent cursor-pointer transition-all duration-300">
+                            <h3 class="text-2xl font-bold text-amber-900">Eleventy (11ty)</h3>
+                            <p class="text-gray-600 mt-2">El artesano flexible. Máximo control y personalización para
+                                desarrolladores JavaScript.</p>
+                        </div>
+                        <div id="ssg-hugo"
+                            class="ssg-card bg-white p-6 rounded-xl shadow-md border-2 border-transparent cursor-pointer transition-all duration-300">
+                            <h3 class="text-2xl font-bold text-amber-900">Hugo</h3>
+                            <p class="text-gray-600 mt-2">El demonio de la velocidad. Extremadamente rápido y
+                                opinionado, ideal para blogs estructurados.</p>
+                        </div>
+                        <div id="ssg-jekyll"
+                            class="ssg-card bg-white p-6 rounded-xl shadow-md border-2 border-transparent cursor-pointer transition-all duration-300">
+                            <h3 class="text-2xl font-bold text-amber-900">Jekyll</h3>
+                            <p class="text-gray-600 mt-2">El originador clásico. Integración perfecta con GitHub Pages,
+                                maduro y estable.</p>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-2/3">
+                        <div class="chart-container">
+                            <canvas id="ssgComparisonChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tutorial" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-amber-900">Manos a la Obra con Eleventy</h2>
+                    <p class="mt-3 text-gray-600 max-w-2xl mx-auto">Sigue estos pasos para construir la base de tu blog
+                        automatizado. Hemos elegido Eleventy por su flexibilidad y su ecosistema basado en JavaScript.
+                    </p>
+                </div>
+                <div class="max-w-4xl mx-auto">
+                    <div class="mb-4 flex flex-wrap justify-center border-b border-gray-200">
+                        <button
+                            class="tab-button text-sm md:text-base py-2 px-4 font-medium text-gray-600 transition-colors duration-300 active"
+                            data-tab="1">1. Configuración</button>
+                        <button
+                            class="tab-button text-sm md:text-base py-2 px-4 font-medium text-gray-600 transition-colors duration-300"
+                            data-tab="2">2. Estructura</button>
+                        <button
+                            class="tab-button text-sm md:text-base py-2 px-4 font-medium text-gray-600 transition-colors duration-300"
+                            data-tab="3">3. Layouts</button>
+                        <button
+                            class="tab-button text-sm md:text-base py-2 px-4 font-medium text-gray-600 transition-colors duration-300"
+                            data-tab="4">4. Contenido</button>
+                        <button
+                            class="tab-button text-sm md:text-base py-2 px-4 font-medium text-gray-600 transition-colors duration-300"
+                            data-tab="5">5. Servidor Local</button>
+                    </div>
+                    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                        <div id="tab-content-1" class="tab-content">
+                            <h3 class="text-xl font-bold mb-4 text-amber-900">Inicialización del Proyecto</h3>
+                            <p class="mb-4 text-gray-600">Necesitas Node.js. Estos comandos crean el proyecto, lo
+                                inicializan y añaden Eleventy como dependencia de desarrollo.</p>
+                            <pre class="bg-gray-800 text-white p-4 rounded-md text-sm overflow-x-auto"><code>mkdir mi-blog-automatizado
+cd mi-blog-automatizado
+npm init -y
+npm install @11ty/eleventy --save-dev</code></pre>
+                        </div>
+                        <div id="tab-content-2" class="tab-content hidden">
+                            <h3 class="text-xl font-bold mb-4 text-amber-900">Definiendo la Arquitectura</h3>
+                            <p class="mb-4 text-gray-600">Creamos una estructura de carpetas limpia y le decimos a
+                                Eleventy dónde encontrar todo mediante el archivo de configuración
+                                <code>.eleventy.js</code>.
+                            </p>
+                            <pre class="bg-gray-800 text-white p-4 rounded-md text-sm overflow-x-auto"><code>// .eleventy.js
+module.exports = function(eleventyConfig) {
+  return {
+    dir: {
+      input: "src",
+      output: "_site",
+      includes: "_includes",
+      data: "_data"
+    }
+  };
+};</code></pre>
+                        </div>
+                        <div id="tab-content-3" class="tab-content hidden">
+                            <h3 class="text-xl font-bold mb-4 text-amber-900">Creando Diseños Reutilizables</h3>
+                            <p class="mb-4 text-gray-600">Los "layouts" definen la estructura HTML una sola vez. Creamos
+                                una base (`base.njk`) y una plantilla para posts (`post.njk`) que hereda de la base.</p>
+                            <pre class="bg-gray-800 text-white p-4 rounded-md text-sm overflow-x-auto"><code>{% raw %}{# src/_includes/layouts/post.njk #}
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+  <article>
+    <h2>{{ title }}</h2>
+    <p>Publicado el: <time datetime="{{ date }}">{{ date }}</time></p>
+    {{ content | safe }}
+  </article>
+{% endblock %}{% endraw %}</code></pre>
+                        </div>
+                        <div id="tab-content-4" class="tab-content hidden">
+                            <h3 class="text-xl font-bold mb-4 text-amber-900">Añadiendo Artículos</h3>
+                            <p class="mb-4 text-gray-600">Crea archivos Markdown (`.md`) o HTML (`.html`) en
+                                `src/content/blog/`. La clave es el "Front Matter" al inicio del archivo para definir
+                                metadatos como el título y el layout a usar.</p>
+                            <pre class="bg-gray-800 text-white p-4 rounded-md text-sm overflow-x-auto"><code>---
+title: "Mi Primer Artículo"
+date: 2025-08-12
+tags: ["post"]
+layout: "layouts/post.njk"
+---
+
+Este es el contenido de mi primer artículo.
+**¡Es así de simple!**</code></pre>
+                        </div>
+                        <div id="tab-content-5" class="tab-content hidden">
+                            <h3 class="text-xl font-bold mb-4 text-amber-900">Desarrollo Local</h3>
+                            <p class="mb-4 text-gray-600">Eleventy incluye un servidor que vigila tus archivos,
+                                recompila el sitio y refresca el navegador automáticamente cada vez que guardas un
+                                cambio.</p>
+                            <pre
+                                class="bg-gray-800 text-white p-4 rounded-md text-sm overflow-x-auto"><code>npx @11ty/eleventy --serve</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="despliegue" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-amber-900">Automatiza tu Despliegue</h2>
+                    <p class="mt-3 text-gray-600 max-w-2xl mx-auto">El despliegue moderno es Git-céntrico. Conecta tu
+                        repositorio a una plataforma como Netlify o Vercel para una automatización completa.</p>
+                </div>
+                <div
+                    class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 text-center">
+                    <div class="p-4 bg-amber-100 rounded-lg shadow">
+                        <p class="font-bold text-amber-900">1. `git push`</p>
+                        <p class="text-sm text-amber-800">Envías tus cambios a GitHub</p>
+                    </div>
+                    <div class="text-2xl font-bold text-amber-400">→</div>
+                    <div class="p-4 bg-gray-800 text-white rounded-lg shadow">
+                        <p class="font-bold">2. GitHub</p>
+                        <p class="text-sm text-gray-300">Notifica a tu plataforma de hosting</p>
+                    </div>
+                    <div class="text-2xl font-bold text-amber-400">→</div>
+                    <div class="p-4 bg-teal-100 rounded-lg shadow">
+                        <p class="font-bold text-teal-900">3. Netlify/Vercel</p>
+                        <p class="text-sm text-teal-800">Compila y despliega tu sitio</p>
+                    </div>
+                    <div class="text-2xl font-bold text-amber-400">→</div>
+                    <div class="p-4 bg-blue-100 rounded-lg shadow">
+                        <p class="font-bold text-blue-900">4. CDN Global</p>
+                        <p class="text-sm text-blue-800">Tu sitio está en vivo y actualizado</p>
+                    </div>
+                </div>
+                <p class="text-center mt-8 text-gray-600">Este ciclo se repite cada vez que publicas un nuevo commit,
+                    logrando el objetivo: <br><strong>añadir un archivo, publicar un post, automáticamente.</strong></p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>Panel Interactivo creado para explorar la Guía de Blogs Automatizados.</p>
+            <p class="text-sm text-gray-400 mt-2">Construido con Tailwind CSS y Chart.js.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ssgData = {
+                labels: ['Rendimiento', 'Flexibilidad', 'Curva Aprendizaje', 'Ecosistema', 'Facilidad Despliegue'],
+                datasets: [
+                    {
+                        label: 'Eleventy',
+                        data: [4, 5, 4, 5, 5],
+                        backgroundColor: 'rgba(251, 191, 36, 0.2)',
+                        borderColor: 'rgba(251, 191, 36, 1)',
+                        pointBackgroundColor: 'rgba(251, 191, 36, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(251, 191, 36, 1)'
+                    },
+                    {
+                        label: 'Hugo',
+                        data: [5, 3, 3, 4, 4],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(59, 130, 246, 1)'
+                    },
+                    {
+                        label: 'Jekyll',
+                        data: [3, 4, 4, 4, 5],
+                        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        pointBackgroundColor: 'rgba(239, 68, 68, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(239, 68, 68, 1)'
+                    }
+                ]
+            };
+
+            const chartCtx = document.getElementById('ssgComparisonChart').getContext('2d');
+            const ssgChart = new Chart(chartCtx, {
+                type: 'radar',
+                data: {
+                    labels: ssgData.labels,
+                    datasets: []
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                            pointLabels: {
+                                font: { size: 12, weight: '500' },
+                                color: '#4A5568'
+                            },
+                            ticks: {
+                                backdropColor: 'transparent',
+                                stepSize: 1,
+                                font: { size: 10 }
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 5
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: { size: 14 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.r !== null) {
+                                        label += context.parsed.r;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const ssgCards = {
+                'eleventy': document.getElementById('ssg-eleventy'),
+                'hugo': document.getElementById('ssg-hugo'),
+                'jekyll': document.getElementById('ssg-jekyll')
+            };
+
+            function updateChart(selectedSsgKey) {
+                const selectedDataset = ssgData.datasets.find(d => d.label.toLowerCase() === selectedSsgKey);
+
+                ssgChart.data.datasets = [selectedDataset];
+                ssgChart.update();
+
+                Object.values(ssgCards).forEach(card => card.classList.remove('active'));
+                if (ssgCards[selectedSsgKey]) {
+                    ssgCards[selectedSsgKey].classList.add('active');
+                }
+            }
+
+            ssgCards.eleventy.addEventListener('click', () => updateChart('eleventy'));
+            ssgCards.hugo.addEventListener('click', () => updateChart('hugo'));
+            ssgCards.jekyll.addEventListener('click', () => updateChart('jekyll'));
+
+            updateChart('eleventy');
+            ssgCards.eleventy.classList.add('active');
+
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.dataset.tab;
+
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    tabContents.forEach(content => {
+                        if (content.id === `tab-content-${tabId}`) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active-nav');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active-nav');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

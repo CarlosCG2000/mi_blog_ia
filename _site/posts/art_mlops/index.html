@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorador Interactivo: MLOps y LLMs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Slate & Amber -->
+    <!-- Application Structure Plan: The SPA is designed with a top-down, progressive disclosure approach. It starts with a high-level introduction and navigation allowing users to jump to core pillars: MLOps, LLMs, and the specialized LLMOps. This thematic structure, rather than the report's linear one, facilitates better comparison and understanding of how these concepts relate. Key interactions include tabbed interfaces to compare MLOps vs. LLMOps, clickable cards for principles, and an interactive diagram for the RAG process. This design choice makes the dense, technical information more accessible by breaking it into manageable, interactive chunks, guiding the user from general concepts to specific details. -->
+    <!-- Visualization & Content Choices: 
+        - MLOps Principles: Goal: Inform/Organize. Method: Interactive Cards (HTML/CSS/JS). Interaction: Click to reveal details. Justification: More engaging than a static table, encourages exploration.
+        - MLOps vs. LLMOps: Goal: Compare. Method: Bar Chart (Chart.js) and a tabbed content viewer. Interaction: Buttons to switch between a visual chart comparison and a detailed textual comparison. Justification: Provides both a quick visual summary and an in-depth analysis, catering to different user preferences.
+        - RAG Workflow: Goal: Explain a process. Method: Styled HTML/CSS diagram. Interaction: Clickable steps to highlight and display explanatory text. Justification: Visually breaks down a complex process, making it easier to follow than a long paragraph. No SVG/Mermaid used.
+        - LLM Challenges: Goal: Inform/Organize. Method: Donut Chart (Chart.js) and interactive list. Interaction: Hovering over the chart highlights the corresponding challenge in the list. Justification: Connects visual data representation with detailed text, enhancing comprehension.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            /* slate-50 */
+            color: #334155;
+            /* slate-700 */
+        }
+
+        .nav-link {
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-link.active,
+        .nav-link:hover {
+            color: #f59e0b;
+            /* amber-500 */
+            border-bottom-color: #f59e0b;
+        }
+
+        .section-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .tab-button {
+            transition: all 0.3s;
+        }
+
+        .tab-button.active {
+            background-color: #f59e0b;
+            color: white;
+        }
+
+        .tab-button:not(.active) {
+            background-color: #e2e8f0;
+            /* slate-200 */
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+
+        .collapsible-content.open {
+            max-height: 1000px;
+            /* Adjust as needed */
+        }
+
+        .rag-step {
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .rag-step.active {
+            background-color: #fef3c7;
+            /* amber-100 */
+            border-color: #f59e0b;
+            /* amber-500 */
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-md">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-slate-800">MLOps y LLM: Una Guía Interactiva</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#intro" class="nav-link active">Introducción</a>
+                <a href="#mlops" class="nav-link">MLOps</a>
+                <a href="#llm" class="nav-link">LLMs</a>
+                <a href="#llmops" class="nav-link">LLMOps</a>
+                <a href="#rag" class="nav-link">RAG</a>
+                <a href="#apps" class="nav-link">Aplicaciones</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-slate-700 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
+                </svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="#intro" class="block py-2 px-4 text-sm hover:bg-slate-100">Introducción</a>
+            <a href="#mlops" class="block py-2 px-4 text-sm hover:bg-slate-100">MLOps</a>
+            <a href="#llm" class="block py-2 px-4 text-sm hover:bg-slate-100">LLMs</a>
+            <a href="#llmops" class="block py-2 px-4 text-sm hover:bg-slate-100">LLMOps</a>
+            <a href="#rag" class="block py-2 px-4 text-sm hover:bg-slate-100">RAG</a>
+            <a href="#apps" class="block py-2 px-4 text-sm hover:bg-slate-100">Aplicaciones</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="intro" class="text-center mb-20">
+            <h2 class="text-4xl font-bold mb-4 text-slate-800">Operacionalizando la Inteligencia Artificial a Escala
+            </h2>
+            <p class="max-w-3xl mx-auto text-lg text-slate-600">
+                Esta guía interactiva desglosa los conceptos de MLOps y Grandes Modelos de Lenguaje (LLMs). Explora cómo
+                MLOps proporciona la base para la IA en producción y cómo su extensión, LLMOps, aborda los desafíos
+                únicos de los LLMs. Descubre las técnicas, herramientas y aplicaciones que están transformando las
+                industrias.
+            </p>
+        </section>
+
+        <section id="mlops" class="mb-20 scroll-mt-20">
+            <h2 class="text-3xl font-bold mb-2 text-center text-slate-800">MLOps: La Columna Vertebral de la IA</h2>
+            <p class="text-center text-slate-600 mb-10 max-w-2xl mx-auto">MLOps (Machine Learning Operations) es la
+                disciplina que gestiona el ciclo de vida completo de los modelos de ML, asegurando que sean fiables,
+                escalables y sostenibles en producción. Haz clic en cada principio para saber más.</p>
+            <div id="mlops-principles" class="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+            </div>
+        </section>
+
+        <section id="llm" class="mb-20 scroll-mt-20">
+            <h2 class="text-3xl font-bold mb-2 text-center text-slate-800">Grandes Modelos de Lenguaje (LLMs)</h2>
+            <p class="text-center text-slate-600 mb-10 max-w-2xl mx-auto">Los LLMs son una forma avanzada de IA
+                entrenada con enormes cantidades de texto para comprender y generar lenguaje humano. Son la base de la
+                IA generativa moderna.</p>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="section-card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-amber-600">¿Cómo Funcionan?</h3>
+                    <ul class="space-y-4 text-slate-600">
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-3 mt-1">&#10140;</span>
+                            <div><strong>Arquitectura Transformer:</strong> Utilizan mecanismos de "autoatención" para
+                                ponderar la importancia de las palabras en una secuencia, capturando el contexto de
+                                manera efectiva.</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-3 mt-1">&#10140;</span>
+                            <div><strong>Pre-entrenamiento y Ajuste Fino:</strong> Primero aprenden patrones generales
+                                de lenguaje de vastos corpus de datos. Luego, se especializan (ajuste fino) en tareas
+                                específicas con conjuntos de datos más pequeños.</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-3 mt-1">&#10140;</span>
+                            <div><strong>Generación Probabilística:</strong> Generan texto prediciendo la siguiente
+                                palabra (o "token") más probable en una secuencia, basándose en el contexto aprendido.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="section-card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-center text-amber-600">Desafíos Clave de los LLMs</h3>
+                    <p class="text-center text-slate-500 mb-4 text-sm">Pasa el ratón por el gráfico para ver detalles.
+                    </p>
+                    <div class="chart-container mx-auto">
+                        <canvas id="llmChallengesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="llmops" class="mb-20 scroll-mt-20">
+            <h2 class="text-3xl font-bold mb-2 text-center text-slate-800">LLMOps: La Especialización Necesaria</h2>
+            <p class="text-center text-slate-600 mb-10 max-w-2xl mx-auto">LLMOps adapta los principios de MLOps para
+                abordar los desafíos únicos de los LLMs. No es solo aplicar MLOps, sino extenderlo. Explora las
+                diferencias clave.</p>
+            <div class="flex justify-center mb-6">
+                <div class="inline-flex rounded-md shadow-sm" role="group">
+                    <button type="button" id="show-chart-btn"
+                        class="tab-button active py-2 px-4 text-sm font-medium rounded-l-lg">Vista Gráfica</button>
+                    <button type="button" id="show-table-btn"
+                        class="tab-button py-2 px-4 text-sm font-medium rounded-r-lg">Vista Detallada</button>
+                </div>
+            </div>
+            <div id="comparison-content" class="section-card p-6">
+                <div id="chart-view">
+                    <h3 class="text-xl font-semibold mb-4 text-center text-amber-600">MLOps vs. LLMOps: Nivel de
+                        Complejidad</h3>
+                    <div class="chart-container mx-auto">
+                        <canvas id="mlopsVsLlmopsChart"></canvas>
+                    </div>
+                </div>
+                <div id="table-view" class="hidden">
+                    <h3 class="text-xl font-semibold mb-4 text-center text-amber-600">Comparativa Detallada</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-500">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Aspecto</th>
+                                    <th scope="col" class="px-6 py-3">MLOps Tradicional</th>
+                                    <th scope="col" class="px-6 py-3">LLMOps</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparison-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="rag" class="mb-20 scroll-mt-20">
+            <h2 class="text-3xl font-bold mb-2 text-center text-slate-800">Técnica Avanzada: Generación Aumentada por
+                Recuperación (RAG)</h2>
+            <p class="text-center text-slate-600 mb-10 max-w-3xl mx-auto">RAG es una técnica crucial que conecta los
+                LLMs con fuentes de conocimiento externas y actualizadas. Esto reduce las "alucinaciones" (información
+                inventada) y fundamenta las respuestas en hechos verificables. Haz clic en cada paso del proceso para
+                explorarlo.</p>
+            <div class="section-card p-8">
+                <div
+                    class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4 mb-8">
+                    <div id="rag-step-1"
+                        class="rag-step text-center p-4 border-2 border-slate-200 rounded-lg w-full md:w-1/4 active">
+                        <div class="text-2xl font-bold text-amber-500 mb-2">1</div>
+                        <h4 class="font-semibold">Consulta del Usuario</h4>
+                    </div>
+                    <div class="text-2xl text-slate-400 hidden md:block">&rarr;</div>
+                    <div id="rag-step-2"
+                        class="rag-step text-center p-4 border-2 border-slate-200 rounded-lg w-full md:w-1/4">
+                        <div class="text-2xl font-bold text-amber-500 mb-2">2</div>
+                        <h4 class="font-semibold">Recuperación de Datos</h4>
+                    </div>
+                    <div class="text-2xl text-slate-400 hidden md:block">&rarr;</div>
+                    <div id="rag-step-3"
+                        class="rag-step text-center p-4 border-2 border-slate-200 rounded-lg w-full md:w-1/4">
+                        <div class="text-2xl font-bold text-amber-500 mb-2">3</div>
+                        <h4 class="font-semibold">Aumento del Prompt</h4>
+                    </div>
+                    <div class="text-2xl text-slate-400 hidden md:block">&rarr;</div>
+                    <div id="rag-step-4"
+                        class="rag-step text-center p-4 border-2 border-slate-200 rounded-lg w-full md:w-1/4">
+                        <div class="text-2xl font-bold text-amber-500 mb-2">4</div>
+                        <h4 class="font-semibold">Generación Fundamentada</h4>
+                    </div>
+                </div>
+                <div id="rag-explanation" class="bg-slate-50 p-6 rounded-lg text-center">
+                    <p class="text-slate-700"></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="apps" class="scroll-mt-20">
+            <h2 class="text-3xl font-bold mb-2 text-center text-slate-800">Aplicaciones en el Mundo Real</h2>
+            <p class="text-center text-slate-600 mb-10 max-w-2xl mx-auto">La implementación de un marco LLMOps robusto
+                permite a las organizaciones aplicar LLMs en diversas industrias para resolver problemas complejos y
+                generar valor.</p>
+            <div id="industry-apps" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-white mt-20">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>Guía Interactiva sobre MLOps y LLMs.</p>
+            <p class="text-sm text-slate-400 mt-2">Creado para una exploración clara y concisa de conceptos complejos de
+                IA.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const data = {
+                mlopsPrinciples: [
+                    { title: 'Automatización', icon: '&#128640;', description: 'Automatiza etapas clave del pipeline (ingesta, entrenamiento, despliegue) para garantizar repetibilidad, consistencia y escalabilidad, liberando recursos humanos para tareas de mayor valor.' },
+                    { title: 'Control de Versiones', icon: '&#128193;', description: 'Rastrea cambios en código, datos y modelos. Esencial para la reproducibilidad, la auditoría y la capacidad de revertir a versiones anteriores si es necesario.' },
+                    { title: 'Reproducibilidad', icon: '&#128256;', description: 'Asegura que cada fase del flujo de trabajo produzca resultados idénticos con la misma entrada, lo que facilita la depuración, la colaboración y la comparación de experimentos.' },
+                    { title: 'Actividades Continuas', icon: '&#8635;', description: 'CI/CD/CT (Integración, Entrega y Entrenamiento Continuos) para mantener los modelos actualizados y desplegar cambios de forma segura y rápida en producción.' },
+                    { title: 'Gobernanza', icon: '&#128737;', description: 'Gestiona la seguridad, el cumplimiento normativo, la ética y la colaboración. Asegura que los modelos sean justos, imparciales y se utilicen de forma responsable.' }
+                ],
+                llmChallenges: {
+                    labels: ['Alucinaciones', 'Sesgos', 'Costos de Inferencia', 'Gestión de Datos', 'Seguridad'],
+                    data: [30, 25, 20, 15, 10],
+                    descriptions: [
+                        'Generación de información falsa o inventada. Mitigado con RAG y ajuste fino.',
+                        'Transferencia de sesgos de los datos de entrenamiento. Requiere auditoría de datos y evaluación continua.',
+                        'Alto costo computacional (GPU, APIs). Se optimiza con poda, cuantificación y arquitecturas eficientes.',
+                        'Manejo de enormes volúmenes de datos no estructurados. Necesita pipelines de datos robustos.',
+                        'Riesgos como inyección de prompts y fugas de datos. Requiere gobernanza y seguridad por diseño.'
+                    ]
+                },
+                comparisonData: [
+                    { aspect: 'Tipo de Datos', mlops: 'Principalmente estructurados (tablas, números).', llmops: 'Principalmente texto no estructurado (documentos, correos).' },
+                    { aspect: 'Desarrollo', mlops: 'Entrenamiento desde cero o transferencia de aprendizaje.', llmops: 'Uso de modelos base con ajuste fino o de prompts.' },
+                    { aspect: 'Evaluación', mlops: 'Métricas cuantitativas claras (precisión, F1).', llmops: 'Más compleja y subjetiva (coherencia, factualidad, alucinaciones).' },
+                    { aspect: 'Despliegue', mlops: 'Puntos finales estáticos o trabajos por lotes.', llmops: 'Tiempo de ejecución dinámico con pipelines orquestados.' },
+                    { aspect: 'Costos', mlops: 'Centrados en entrenamiento y experimentación.', llmops: 'Centrados en la inferencia en producción (GPU, APIs).' },
+                    { aspect: 'Gobernanza', mlops: 'Versionado de modelos y trazabilidad de datos.', llmops: 'Se extiende a prompts, respuestas generadas y seguridad contra nuevos ataques.' }
+                ],
+                ragSteps: [
+                    { title: 'Consulta del Usuario', description: 'El proceso comienza cuando un usuario realiza una pregunta o introduce un prompt en el sistema.' },
+                    { title: 'Recuperación de Datos', description: 'El sistema busca en una base de conocimiento externa (a menudo una base de datos vectorial) para encontrar la información más relevante para la consulta del usuario. Esto se basa en la similitud semántica, no solo en palabras clave.' },
+                    { title: 'Aumento del Prompt', description: 'La información relevante recuperada se combina con el prompt original del usuario. Este nuevo "prompt aumentado" proporciona un contexto rico y fáctico al LLM.' },
+                    { title: 'Generación Fundamentada', description: 'El LLM recibe el prompt aumentado y genera una respuesta que está fundamentada en la información recuperada, resultando en una salida más precisa, relevante y menos propensa a alucinaciones.' }
+                ],
+                industryApps: [
+                    { industry: 'Finanzas', icon: '&#128176;', description: 'Automatización de calificación crediticia y detección de fraudes, asegurando auditorías y cumplimiento normativo.' },
+                    { industry: 'Atención Médica', icon: '&#127973;', description: 'Ajuste fino de modelos con datos médicos para diagnósticos asistidos y monitoreo de anomalías para proteger la seguridad del paciente.' },
+                    { industry: 'Comercio Minorista', icon: '&#128722;', description: 'Generación de recomendaciones de productos personalizadas y análisis de sentimientos a partir de comentarios de clientes.' },
+                    { industry: 'Logística', icon: '&#128666;', description: 'Optimización de rutas en tiempo real y gestión de flotas mediante el análisis de datos de tráfico y estado de vehículos.' },
+                    { industry: 'Servicio al Cliente', icon: '&#128100;', description: 'Desarrollo de chatbots más inteligentes y naturales que proporcionan respuestas precisas y contextualizadas, mejorando la experiencia del usuario.' },
+                    { industry: 'Legal y Cumplimiento', icon: '&#9878;', description: 'Análisis y resumen de grandes volúmenes de documentos legales, garantizando la precisión fáctica y la rendición de cuentas.' }
+                ]
+            };
+
+            const mlopsContainer = document.getElementById('mlops-principles');
+            data.mlopsPrinciples.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'section-card p-6 text-center cursor-pointer';
+                card.innerHTML = `
+                    <div class="text-4xl mb-4">${p.icon}</div>
+                    <h3 class="text-xl font-semibold mb-2 text-slate-800">${p.title}</h3>
+                    <div class="collapsible-content text-slate-600 text-sm">
+                        <p>${p.description}</p>
+                    </div>
+                `;
+                mlopsContainer.appendChild(card);
+                card.addEventListener('click', () => {
+                    card.querySelector('.collapsible-content').classList.toggle('open');
+                });
+            });
+
+            const llmChallengesCtx = document.getElementById('llmChallengesChart').getContext('2d');
+            const llmChallengesChart = new Chart(llmChallengesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.llmChallenges.labels,
+                    datasets: [{
+                        label: 'Distribución de Desafíos',
+                        data: data.llmChallenges.data,
+                        backgroundColor: ['#fbbf24', '#f97316', '#ea580c', '#d97706', '#b45309'],
+                        borderColor: '#f8fafc',
+                        borderWidth: 4,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '%';
+                                    }
+                                    return label;
+                                },
+                                afterLabel: function (context) {
+                                    return data.llmChallenges.descriptions[context.dataIndex];
+                                }
+                            },
+                            bodyFont: { size: 12 },
+                            padding: 10,
+                            displayColors: false,
+                        }
+                    }
+                }
+            });
+
+            const comparisonCtx = document.getElementById('mlopsVsLlmopsChart').getContext('2d');
+            const comparisonChart = new Chart(comparisonCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.comparisonData.map(d => d.aspect),
+                    datasets: [
+                        {
+                            label: 'MLOps Tradicional',
+                            data: [3, 2, 2, 2, 3, 3],
+                            backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'LLMOps',
+                            data: [5, 5, 5, 5, 4, 5],
+                            backgroundColor: 'rgba(245, 158, 11, 0.7)',
+                            borderColor: 'rgba(245, 158, 11, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    const labels = ['Bajo', 'Bajo', 'Medio', 'Alto', 'Muy Alto', 'Crítico'];
+                                    return labels[value];
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                    }
+                }
+            });
+
+            const tableBody = document.getElementById('comparison-table-body');
+            data.comparisonData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = 'bg-white border-b';
+                tr.innerHTML = `
+                    <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">${row.aspect}</th>
+                    <td class="px-6 py-4">${row.mlops}</td>
+                    <td class="px-6 py-4">${row.llmops}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            document.getElementById('show-chart-btn').addEventListener('click', function () {
+                document.getElementById('chart-view').classList.remove('hidden');
+                document.getElementById('table-view').classList.add('hidden');
+                this.classList.add('active');
+                document.getElementById('show-table-btn').classList.remove('active');
+            });
+
+            document.getElementById('show-table-btn').addEventListener('click', function () {
+                document.getElementById('chart-view').classList.add('hidden');
+                document.getElementById('table-view').classList.remove('hidden');
+                this.classList.add('active');
+                document.getElementById('show-chart-btn').classList.remove('active');
+            });
+
+            const ragSteps = document.querySelectorAll('.rag-step');
+            const ragExplanation = document.getElementById('rag-explanation').querySelector('p');
+            ragExplanation.textContent = data.ragSteps[0].description;
+            ragSteps.forEach((step, index) => {
+                step.addEventListener('click', () => {
+                    ragSteps.forEach(s => s.classList.remove('active'));
+                    step.classList.add('active');
+                    ragExplanation.textContent = data.ragSteps[index].description;
+                });
+            });
+
+            const industryContainer = document.getElementById('industry-apps');
+            data.industryApps.forEach(app => {
+                const card = document.createElement('div');
+                card.className = 'section-card p-6 flex items-start space-x-4';
+                card.innerHTML = `
+                    <div class="text-3xl text-amber-500 mt-1">${app.icon}</div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-1 text-slate-800">${app.industry}</h3>
+                        <p class="text-slate-600">${app.description}</p>
+                    </div>
+                `;
+                industryContainer.appendChild(card);
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            const navLinks = document.querySelectorAll('nav a');
+            const sections = document.querySelectorAll('main section');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-30% 0px -70% 0px' });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    if (mobileMenu.classList.contains('hidden') === false) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

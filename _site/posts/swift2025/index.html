@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Interactivo: Ecosistema Swift 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Tech -->
+    <!-- Application Structure Plan: The SPA is designed as an interactive dashboard with four thematic sections (Language/Performance, UI/UX, AI Dev, Full-Stack) accessible via a main navigation. This non-linear structure allows users to explore productivity multipliers in any order, which is more engaging than the original report's linear format. The goal is to facilitate understanding by breaking down complex topics into interactive components like charts, diagrams, and code comparisons, enabling a self-guided discovery of the Swift ecosystem's key advantages. -->
+    <!-- Visualization & Content Choices:
+        - Language/Perf: Goal: Show core efficiency gains. Method: Bar chart for `@Observable` performance (30-50% gain), interactive HTML tabs for before/after code comparison. Justification: Quantifies performance and visually demonstrates code simplification. Library: Chart.js.
+        - UI/UX: Goal: Highlight modern UI creation speed. Method: Bar chart for SwiftUI render speed (6x-16x), interactive HTML diagram for new components (`WebView`). Justification: Visualizes abstract performance metrics and simplifies component discovery. Library: Chart.js.
+        - AI Dev: Goal: Clarify the 3-tier AI strategy. Method: HTML/Tailwind 3-column layout for the tiers and a structured HTML diagram for the 'Guided Generation' flow. Justification: Organizes the complex strategy into clear, digestible parts and visualizes the crucial type-safe data flow.
+        - Full-Stack: Goal: Explain the BFF pattern and unified stack value. Method: HTML/Tailwind diagram for BFF architecture, interactive HTML table for Vapor/Hummingbird comparison, and a visual icon-based representation of shared models. Justification: Makes abstract architectural patterns concrete and easy to compare.
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F5F4;
+            /* stone-100 */
+            color: #44403C;
+            /* stone-700 */
+        }
+
+        .nav-button {
+            transition: all 0.3s ease;
+            border-bottom: 4px solid transparent;
+        }
+
+        .nav-button.active {
+            border-bottom-color: #0D9488;
+            /* teal-600 */
+            color: #0F766E;
+            /* teal-700 */
+        }
+
+        .nav-button:hover {
+            background-color: #E7E5E4;
+            /* stone-200 */
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .code-block {
+            background-color: #1C1917;
+            /* stone-900 */
+            color: #F5F5F4;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 0.875rem;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        .tab-button {
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        }
+
+        .tab-button.active {
+            background-color: #0D9488;
+            color: white;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <div class="min-h-screen container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-teal-800">Ecosistema Swift 2025</h1>
+            <p class="mt-4 text-lg text-stone-600 max-w-3xl mx-auto">Un panel interactivo sobre los multiplicadores de
+                productividad que redefinen el desarrollo de software con Swift, SwiftUI, IA y arquitecturas Full-Stack.
+            </p>
+        </header>
+
+        <nav class="flex flex-wrap justify-center border-b-2 border-stone-200 mb-8">
+            <button id="nav-lang" class="nav-button active text-sm sm:text-base font-semibold py-4 px-3 sm:px-6"
+                data-section="lang">🚀 Lenguaje y Rendimiento</button>
+            <button id="nav-ui" class="nav-button text-sm sm:text-base font-semibold py-4 px-3 sm:px-6"
+                data-section="ui">🎨 UI/UX Unificado</button>
+            <button id="nav-ai" class="nav-button text-sm sm:text-base font-semibold py-4 px-3 sm:px-6"
+                data-section="ai">🧠 Desarrollo con IA</button>
+            <button id="nav-stack" class="nav-button text-sm sm:text-base font-semibold py-4 px-3 sm:px-6"
+                data-section="stack">🔗 Swift Full-Stack</button>
+        </nav>
+
+        <main id="content-container">
+            <!-- Sección 1: Lenguaje y Rendimiento -->
+            <section id="section-lang" class="space-y-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-stone-800">Cimientos Sólidos, Desarrollo Veloz</h2>
+                    <p class="mt-2 max-w-2xl mx-auto text-stone-600">Swift 6.2 introduce mejoras fundamentales que
+                        eliminan código repetitivo, simplifican la concurrencia y aumentan el rendimiento, permitiendo a
+                        los desarrolladores centrarse en la lógica de negocio.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 items-start">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-teal-700">El Poder de @Observable</h3>
+                        <p class="text-stone-600 mb-4">El nuevo macro `@Observable` reemplaza el patrón
+                            `ObservableObject` de Combine, reduciendo drásticamente el código repetitivo y mejorando el
+                            rendimiento del renderizado de SwiftUI entre un 30% y 50% gracias a un seguimiento de
+                            cambios más granular.</p>
+                        <div class="chart-container">
+                            <canvas id="observableChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-teal-700">Simplificación de Código: Antes y Después
+                        </h3>
+                        <p class="text-stone-600 mb-4">Observe cómo el macro `@Observable` limpia la definición de los
+                            modelos de vista. Menos código significa menos errores y mayor mantenibilidad.</p>
+                        <div class="flex border border-stone-200 rounded-lg p-1 bg-stone-100 mb-4">
+                            <button id="tab-before" class="tab-button w-1/2 py-2 rounded-md text-sm font-medium">Antes
+                                (Combine)</button>
+                            <button id="tab-after"
+                                class="tab-button active w-1/2 py-2 rounded-md text-sm font-medium">Después
+                                (@Observable)</button>
+                        </div>
+                        <div id="code-before" class="hidden">
+                            <div class="code-block">class ViewModel: ObservableObject {
+                                @Published var text: String = ""
+                                @Published var count: Int = 0
+                                }</div>
+                        </div>
+                        <div id="code-after">
+                            <div class="code-block">@Observable
+                                class ViewModel {
+                                var text: String = ""
+                                var count: Int = 0
+                                }</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-teal-700">Concurrencia Accesible y Multiplataforma</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-stone-700">Adopción Progresiva</h4>
+                            <p class="text-stone-600 mt-1">La seguridad de datos en concurrencia ahora es opcional
+                                (*opt-in*), permitiendo a los equipos migrar su código de forma incremental sin
+                                reescribir todo de golpe. Esto reduce la fricción y acelera la adopción de código
+                                moderno y seguro.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-stone-700">Herramientas Multiplataforma</h4>
+                            <p class="text-stone-600 mt-1">Con soporte oficial para VS Code, un nuevo gestor de
+                                toolchains (`swiftly`) e interoperabilidad mejorada con C++ y Java, Swift se consolida
+                                como un lenguaje de propósito general para cualquier entorno.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección 2: UI/UX Unificado -->
+            <section id="section-ui" class="hidden space-y-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-stone-800">Interfaces Modernas, Esfuerzo Mínimo</h2>
+                    <p class="mt-2 max-w-2xl mx-auto text-stone-600">El nuevo lenguaje de diseño "Liquid Glass" y las
+                        mejoras en SwiftUI permiten crear interfaces de usuario consistentes y de alto rendimiento en
+                        todo el ecosistema de Apple de forma automática.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 items-start">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-teal-700">Rendimiento de SwiftUI: Salto Generacional
+                        </h3>
+                        <p class="text-stone-600 mb-4">SwiftUI aborda sus puntos débiles históricos con mejoras masivas.
+                            Las listas son ahora hasta 6 veces más rápidas y las actualizaciones de vistas 16 veces más
+                            veloces, haciendo de SwiftUI la opción preferida para apps de alto rendimiento.</p>
+                        <div class="chart-container">
+                            <canvas id="swiftuiPerfChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-teal-700">Componentes Nativos Esenciales</h3>
+                        <p class="text-stone-600 mb-4">La introducción de `WebView` y un `TextEditor` con soporte para
+                            texto enriquecido de forma nativa elimina la necesidad de complejas envolturas de `UIKit`,
+                            simplificando el código y reduciendo errores.</p>
+                        <div class="bg-stone-100 p-4 rounded-lg">
+                            <h4 class="font-semibold text-stone-800 mb-2">Implementación de WebView</h4>
+                            <p class="text-sm text-stone-600 mb-2">Integrar una vista web ahora es trivialmente simple,
+                                como se muestra en este ejemplo:</p>
+                            <div class="code-block">import WebKit
+
+                                struct BrowserView: View {
+                                @State var page = WebPage()
+
+                                var body: some View {
+                                WebView(page)
+                                .onAppear {
+                                page.load(URLRequest(url: URL(string: "https://apple.com")!))
+                                }
+                                }
+                                }</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-6 flex flex-col md:flex-row items-center gap-6">
+                    <div class="flex-shrink-0 w-32 h-32 rounded-full flex items-center justify-center"
+                        style="background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0)); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.18); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); background-color: rgba(20, 184, 166, 0.2);">
+                        <span class="text-6xl">💧</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-teal-700">El Lenguaje de Diseño "Liquid Glass"</h3>
+                        <p class="text-stone-600 mt-2">Inspirado en visionOS, este nuevo sistema de materiales dinámico
+                            se aplica automáticamente a los componentes estándar de SwiftUI. Proporciona una estética
+                            moderna y translúcida con reflejos y refracciones en tiempo real, unificando la experiencia
+                            visual en todas las plataformas de Apple con cero esfuerzo por parte del desarrollador.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección 3: Desarrollo con IA -->
+            <section id="section-ai" class="hidden space-y-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-stone-800">Un Copiloto Inteligente en Cada Etapa</h2>
+                    <p class="mt-2 max-w-2xl mx-auto text-stone-600">Apple integra una estrategia de IA de tres niveles
+                        que aumenta la productividad, potencia las aplicaciones con inteligencia en el dispositivo y
+                        permite la personalización de modelos para dominios específicos.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="card p-6 text-center">
+                        <div class="text-4xl mb-3">👨‍💻</div>
+                        <h3 class="text-lg font-semibold text-teal-700">Nivel 1: Xcode AI</h3>
+                        <p class="text-sm text-stone-600 mt-2">Asistencia directa en el IDE para generar código,
+                            explicar fragmentos, corregir errores y refactorizar. Acelera el ciclo de desarrollo diario.
+                        </p>
+                    </div>
+                    <div class="card p-6 text-center">
+                        <div class="text-4xl mb-3">📱</div>
+                        <h3 class="text-lg font-semibold text-teal-700">Nivel 2: Foundation Models</h3>
+                        <p class="text-sm text-stone-600 mt-2">Framework para integrar LLMs en el dispositivo. Garantiza
+                            privacidad, baja latencia y funcionamiento offline para crear apps más inteligentes.</p>
+                    </div>
+                    <div class="card p-6 text-center">
+                        <div class="text-4xl mb-3">🔬</div>
+                        <h3 class="text-lg font-semibold text-teal-700">Nivel 3: MLX Framework</h3>
+                        <p class="text-sm text-stone-600 mt-2">Para expertos que necesitan entrenar o ajustar modelos de
+                            ML personalizados para tareas de nicho, directamente en Apple Silicon.</p>
+                    </div>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-teal-700">Generación Guiada: IA Segura y Estructurada
+                    </h3>
+                    <p class="text-stone-600 mb-4">La característica más transformadora es la "Generación Guiada". En
+                        lugar de analizar texto plano propenso a errores, el LLM devuelve directamente un objeto Swift
+                        fuertemente tipado. Esto elimina una clase entera de errores de integración.</p>
+                    <div class="bg-stone-100 p-4 rounded-lg">
+                        <p class="font-mono text-sm text-center text-stone-500 mb-2">Flujo de Trabajo de Generación
+                            Guiada</p>
+                        <div
+                            class="flex flex-col md:flex-row items-center justify-around space-y-4 md:space-y-0 md:space-x-4">
+                            <div class="text-center">
+                                <div class="p-3 bg-white rounded-lg shadow">"Sugiere una receta"</div>
+                                <p class="text-xs mt-1 font-semibold">Prompt del Usuario</p>
+                            </div>
+                            <div class="text-2xl text-teal-500 font-sans">&rarr;</div>
+                            <div class="text-center">
+                                <div class="p-3 bg-white rounded-lg shadow">🤖 LLM en el dispositivo</div>
+                                <p class="text-xs mt-1 font-semibold">Procesamiento del Modelo</p>
+                            </div>
+                            <div class="text-2xl text-teal-500 font-sans">&rarr;</div>
+                            <div class="text-center">
+                                <div class="p-3 bg-white rounded-lg shadow">@Generable struct Receta</div>
+                                <p class="text-xs mt-1 font-semibold">Definición de Estructura</p>
+                            </div>
+                            <div class="text-2xl text-teal-500 font-sans">&rarr;</div>
+                            <div class="text-center">
+                                <div class="p-3 bg-teal-600 text-white rounded-lg shadow">Receta(nombre: "Paella")</div>
+                                <p class="text-xs mt-1 font-semibold">Objeto Swift Tipado</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección 4: Swift Full-Stack -->
+            <section id="section-stack" class="hidden space-y-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-stone-800">Un Ecosistema, Toda la Pila Tecnológica</h2>
+                    <p class="mt-2 max-w-2xl mx-auto text-stone-600">La madurez de Swift en el servidor consolida el
+                        patrón Backend-for-Frontend (BFF), permitiendo a los equipos construir aplicaciones completas
+                        con un único lenguaje, eliminando fricción y errores.</p>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-teal-700">Arquitectura Backend-for-Frontend (BFF)</h3>
+                    <p class="text-stone-600 mb-4">El BFF es una capa intermedia que adapta los datos de múltiples
+                        microservicios a las necesidades exactas de la UI del cliente. Esto desacopla el frontend del
+                        backend, acelera el desarrollo y mejora la seguridad.</p>
+                    <div class="bg-stone-100 p-4 rounded-lg">
+                        <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+                            <div class="flex items-center gap-3">
+                                <div class="text-4xl">📱</div>
+                                <div>
+                                    <p class="font-bold">App iOS</p>
+                                    <p class="text-sm text-stone-500">Cliente (SwiftUI)</p>
+                                </div>
+                            </div>
+                            <div class="text-2xl text-teal-500 font-sans transform rotate-90 md:rotate-0">&harr;</div>
+                            <div class="flex items-center gap-3 bg-white p-3 rounded-lg shadow-md">
+                                <div class="text-4xl">⚙️</div>
+                                <div>
+                                    <p class="font-bold">BFF</p>
+                                    <p class="text-sm text-stone-500">Servidor (Vapor/Hummingbird)</p>
+                                </div>
+                            </div>
+                            <div class="text-2xl text-teal-500 font-sans transform rotate-90 md:rotate-0">&harr;</div>
+                            <div class="flex flex-col space-y-2">
+                                <div class="flex items-center gap-2 text-sm"><span class="text-2xl">📦</span>
+                                    Microservicio A</div>
+                                <div class="flex items-center gap-2 text-sm"><span class="text-2xl">📦</span>
+                                    Microservicio B</div>
+                                <div class="flex items-center gap-2 text-sm"><span class="text-2xl">📦</span>
+                                    Microservicio C</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-teal-700">El Multiplicador Definitivo: Modelos
+                            Compartidos</h3>
+                        <p class="text-stone-600 mb-4">La mayor ganancia de productividad proviene de compartir los
+                            modelos de datos `Codable` entre el cliente y el servidor. Un único paquete SwiftPM define
+                            la "verdad" de los datos, eliminando errores de sincronización y garantizando la seguridad
+                            de tipos en toda la pila.</p>
+                        <div class="flex items-center justify-center gap-4 bg-stone-100 p-4 rounded-lg">
+                            <div class="text-center">
+                                <div class="text-5xl">📱</div>
+                                <p class="text-sm font-semibold mt-1">App iOS</p>
+                            </div>
+                            <div class="text-center p-3 border-2 border-dashed border-teal-500 rounded-lg">
+                                <div class="text-3xl">📦</div>
+                                <p class="text-sm font-semibold mt-1">Modelos `Codable`</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-5xl">🖥️</div>
+                                <p class="text-sm font-semibold mt-1">Servidor Swift</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-teal-700">Eligiendo tu Backend en Swift</h3>
+                        <p class="text-stone-600 mb-4">Vapor y Hummingbird son las dos opciones líderes para el
+                            desarrollo de backend en Swift.</p>
+                        <div class="space-y-3">
+                            <div>
+                                <h4 class="font-semibold text-stone-700">Vapor</h4>
+                                <p class="text-sm text-stone-600">"Con todo incluido". Ideal para prototipado rápido y
+                                    monolitos, con un gran ecosistema y comunidad.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-stone-700">Hummingbird</h4>
+                                <p class="text-sm text-stone-600">Ligero y de alto rendimiento. Perfecto para
+                                    microservicios y equipos que valoran el control granular y una huella mínima.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navButtons = document.querySelectorAll('.nav-button');
+            const sections = {
+                lang: document.getElementById('section-lang'),
+                ui: document.getElementById('section-ui'),
+                ai: document.getElementById('section-ai'),
+                stack: document.getElementById('section-stack'),
+            };
+
+            const codeTabs = {
+                before: document.getElementById('tab-before'),
+                after: document.getElementById('tab-after'),
+            };
+            const codeBlocks = {
+                before: document.getElementById('code-before'),
+                after: document.getElementById('code-after'),
+            };
+
+            function switchSection(sectionId) {
+                Object.values(sections).forEach(section => section.classList.add('hidden'));
+                navButtons.forEach(btn => btn.classList.remove('active'));
+
+                sections[sectionId].classList.remove('hidden');
+                document.getElementById(`nav-${sectionId}`).classList.add('active');
+            }
+
+            function switchCodeTab(tabId) {
+                Object.values(codeBlocks).forEach(block => block.classList.add('hidden'));
+                Object.values(codeTabs).forEach(tab => tab.classList.remove('active'));
+
+                codeBlocks[tabId].classList.remove('hidden');
+                codeTabs[tabId].classList.add('active');
+            }
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    switchSection(button.dataset.section);
+                });
+            });
+
+            Object.entries(codeTabs).forEach(([id, tab]) => {
+                tab.addEventListener('click', () => switchCodeTab(id));
+            });
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#44403C',
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 12 },
+                        padding: 10,
+                        cornerRadius: 4,
+                        displayColors: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#E7E5E4'
+                        },
+                        ticks: {
+                            color: '#57534E'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#57534E'
+                        }
+                    }
+                }
+            };
+
+            const observableCtx = document.getElementById('observableChart').getContext('2d');
+            new Chart(observableCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['ObservableObject (Anterior)', '@Observable (Nuevo)'],
+                    datasets: [{
+                        label: 'Rendimiento Relativo',
+                        data: [100, 140],
+                        backgroundColor: ['#A8A29E', '#14B8A6'],
+                        borderColor: ['#78716C', '#0D9488'],
+                        borderWidth: 1,
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    ...chartOptions,
+                    plugins: {
+                        ...chartOptions.plugins,
+                        tooltip: {
+                            ...chartOptions.plugins.tooltip,
+                            callbacks: {
+                                label: function (context) {
+                                    if (context.dataIndex === 0) return 'Base de rendimiento';
+                                    return 'Hasta 30-50% más rápido';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        ...chartOptions.scales,
+                        y: {
+                            ...chartOptions.scales.y,
+                            ticks: {
+                                ...chartOptions.scales.y.ticks,
+                                callback: function (value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const swiftuiPerfCtx = document.getElementById('swiftuiPerfChart').getContext('2d');
+            new Chart(swiftuiPerfCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Renderizado de Listas', 'Actualizaciones de Vistas'],
+                    datasets: [{
+                        label: 'Mejora de Velocidad (x veces más rápido)',
+                        data: [6, 16],
+                        backgroundColor: ['#5EEAD4', '#0D9488'],
+                        borderColor: ['#2DD4BF', '#0F766E'],
+                        borderWidth: 1,
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    ...chartOptions,
+                    indexAxis: 'y',
+                    scales: {
+                        ...chartOptions.scales,
+                        x: {
+                            ...chartOptions.scales.x,
+                            ticks: {
+                                ...chartOptions.scales.x.ticks,
+                                callback: function (value) {
+                                    return value + 'x';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
