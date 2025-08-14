@@ -124,142 +124,148 @@
         <p class="text-lg text-gray-400 mt-4">Explora todos los artículos publicados hasta la fecha.</p>
     </header>
     <!-- Search Input -->
-    <div class="max-w-xl mx-auto mb-12">
+    <div class="max-w-xl mx-auto mb-12 flex gap-4">
         <input
             type="search"
             id="searchInput"
             placeholder="Buscar por título, descripción, etiqueta..."
-            class="w-full px-5 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none
-                focus:ring-2 focus:ring-amber-500 transition-all"></div>
-        
-        <div class="post-grid max-w-7xl mx-auto" id="postsContainer">
+            class="flex-grow px-5 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500
+                focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all">
+            <input
+                type="date"
+                id="dateFilter"
+                class="px-3 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2
+                    focus:ring-amber-500 transition-all"></div>
             
-                <article class="card h-full" data-title="fases inglés" data-description="" data-tags="post">
-                    <a href="/posts/fase_ingles/" class="block h-full rounded-xl overflow-hidden shadow-2xl bg-gray-900 border border-gray-700/50 aspect-ratio-16/9">
-                        <div class="card-content flex flex-col h-full">
-                            <div class="card-image-wrapper aspect-video overflow-hidden">
-                                <img src="https://www.ui1.es/sites/default/files/blog/images/ingles_retocada_1.jpg" alt="Imagen para Fases Inglés" class="w-full h-full object-cover transition-transform duration-400 ease-in-out transform group-hover:scale-105"></div>
-                                <div class="p-8 flex-grow flex flex-col">
-                                    <h2 class="card-title text-2xl font-bold text-gray-100 mb-3 flex-grow">Fases Inglés</h2>
-                                    
-                                        <p class="text-xs text-amber-500 font-semibold tracking-wider uppercase">
-                                            <time datetime="2025-08-13">13 de agosto de 2025</time>
-                                        </p>
-                                    
-                                </div>
-                            </div>
-                        </a>
-                    </article>
+            <div class="post-grid max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch" id="postsContainer">
                 
-                <article class="card h-full" data-title="inglés contenido" data-description="" data-tags="post">
-                    <a href="/posts/contenido_ingles/" class="block h-full rounded-xl overflow-hidden shadow-2xl bg-gray-900 border border-gray-700/50 aspect-ratio-16/9">
-                        <div class="card-content flex flex-col h-full">
-                            <div class="card-image-wrapper aspect-video overflow-hidden">
-                                <img src="https://www.observatoriorh.com/wp-content/uploads/2019/07/trinity.png" alt="Imagen para Inglés contenido" class="w-full h-full object-cover transition-transform duration-400 ease-in-out transform group-hover:scale-105"></div>
-                                <div class="p-8 flex-grow flex flex-col">
-                                    <h2 class="card-title text-2xl font-bold text-gray-100 mb-3 flex-grow">Inglés contenido</h2>
-                                    
-                                        <p class="text-xs text-amber-500 font-semibold tracking-wider uppercase">
-                                            <time datetime="2025-08-13">13 de agosto de 2025</time>
-                                        </p>
-                                    
+                    <article class="card h-full" data-title="fases inglés" data-description="" data-tags="post">
+                        <a href="/posts/fase_ingles/" class="block h-full rounded-xl overflow-hidden shadow-2xl bg-gray-900 border border-gray-700/50 aspect-ratio-16/9">
+                            <div class="card-content flex flex-col h-full">
+                                <div class="card-image-wrapper aspect-video overflow-hidden">
+                                    <img src="https://www.ui1.es/sites/default/files/blog/images/ingles_retocada_1.jpg" alt="Imagen para Fases Inglés" class="w-full h-full object-cover transition-transform duration-400 ease-in-out transform group-hover:scale-105"></div>
+                                    <div class="p-8 flex-grow flex flex-col">
+                                        <h2 class="card-title text-2xl font-bold text-gray-100 mb-3 flex-grow">Fases Inglés</h2>
+                                        
+                                            <p class="text-xs text-amber-500 font-semibold tracking-wider uppercase">
+                                                <time datetime="2025-08-13">13 de agosto de 2025</time>
+                                            </p>
+                                        
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </article>
-                
-                <article class="card h-full" data-title="ecosistema swift 2025" data-description="" data-tags="post">
-                    <a href="/posts/swift2025/" class="block h-full rounded-xl overflow-hidden shadow-2xl bg-gray-900 border border-gray-700/50 aspect-ratio-16/9">
-                        <div class="card-content flex flex-col h-full">
-                            <div class="card-image-wrapper aspect-video overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1484417894907-623942c8ee29?q=80&amp;w=1632&amp;auto=format&amp;fit=crop" alt="Imagen para Ecosistema Swift 2025" class="w-full h-full object-cover transition-transform duration-400 ease-in-out transform group-hover:scale-105"></div>
-                                <div class="p-8 flex-grow flex flex-col">
-                                    <h2 class="card-title text-2xl font-bold text-gray-100 mb-3 flex-grow">Ecosistema Swift 2025</h2>
-                                    
-                                        <p class="text-xs text-amber-500 font-semibold tracking-wider uppercase">
-                                            <time datetime="2025-08-12">12 de agosto de 2025</time>
-                                        </p>
-                                    
+                            </a>
+                        </article>
+                    
+                    <article class="card h-full" data-title="inglés contenido" data-description="" data-tags="post">
+                        <a href="/posts/contenido_ingles/" class="block h-full rounded-xl overflow-hidden shadow-2xl bg-gray-900 border border-gray-700/50 aspect-ratio-16/9">
+                            <div class="card-content flex flex-col h-full">
+                                <div class="card-image-wrapper aspect-video overflow-hidden">
+                                    <img src="https://www.observatoriorh.com/wp-content/uploads/2019/07/trinity.png" alt="Imagen para Inglés contenido" class="w-full h-full object-cover transition-transform duration-400 ease-in-out transform group-hover:scale-105"></div>
+                                    <div class="p-8 flex-grow flex flex-col">
+                                        <h2 class="card-title text-2xl font-bold text-gray-100 mb-3 flex-grow">Inglés contenido</h2>
+                                        
+                                            <p class="text-xs text-amber-500 font-semibold tracking-wider uppercase">
+                                                <time datetime="2025-08-13">13 de agosto de 2025</time>
+                                            </p>
+                                        
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </article>
-                
-                <article class="card h-full" data-title="panel interactivo: guía de blogs automatizados" data-description="" data-tags="post">
-                    <a href="/posts/panel_interactivo/" class="block h-full rounded-xl overflow-hidden shadow-2xl bg-gray-900 border border-gray-700/50 aspect-ratio-16/9">
-                        <div class="card-content flex flex-col h-full">
-                            <div class="card-image-wrapper aspect-video overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1592609931095-54a2168ae893?q=80&amp;w=1740&amp;auto=format&amp;fit=crop" alt="Imagen para Panel Interactivo: Guía de Blogs Automatizados" class="w-full h-full object-cover transition-transform duration-400 ease-in-out transform group-hover:scale-105"></div>
-                                <div class="p-8 flex-grow flex flex-col">
-                                    <h2 class="card-title text-2xl font-bold text-gray-100 mb-3 flex-grow">Panel Interactivo: Guía de Blogs Automatizados</h2>
-                                    
-                                        <p class="text-xs text-amber-500 font-semibold tracking-wider uppercase">
-                                            <time datetime="2025-08-12">12 de agosto de 2025</time>
-                                        </p>
-                                    
+                            </a>
+                        </article>
+                    
+                    <article class="card h-full" data-title="ecosistema swift 2025" data-description="" data-tags="post">
+                        <a href="/posts/swift2025/" class="block h-full rounded-xl overflow-hidden shadow-2xl bg-gray-900 border border-gray-700/50 aspect-ratio-16/9">
+                            <div class="card-content flex flex-col h-full">
+                                <div class="card-image-wrapper aspect-video overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1484417894907-623942c8ee29?q=80&amp;w=1632&amp;auto=format&amp;fit=crop" alt="Imagen para Ecosistema Swift 2025" class="w-full h-full object-cover transition-transform duration-400 ease-in-out transform group-hover:scale-105"></div>
+                                    <div class="p-8 flex-grow flex flex-col">
+                                        <h2 class="card-title text-2xl font-bold text-gray-100 mb-3 flex-grow">Ecosistema Swift 2025</h2>
+                                        
+                                            <p class="text-xs text-amber-500 font-semibold tracking-wider uppercase">
+                                                <time datetime="2025-08-12">12 de agosto de 2025</time>
+                                            </p>
+                                        
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </article>
-                
-                <article class="card h-full" data-title="explorador interactivo: mlops y llms" data-description="" data-tags="post">
-                    <a href="/posts/mlops/" class="block h-full rounded-xl overflow-hidden shadow-2xl bg-gray-900 border border-gray-700/50 aspect-ratio-16/9">
-                        <div class="card-content flex flex-col h-full">
-                            <div class="card-image-wrapper aspect-video overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&amp;w=1720&amp;h=960&amp;auto=format&amp;fit=crop" alt="Imagen para Explorador Interactivo: MLOps y LLMs" class="w-full h-full object-cover transition-transform duration-400 ease-in-out transform group-hover:scale-105"></div>
-                                <div class="p-8 flex-grow flex flex-col">
-                                    <h2 class="card-title text-2xl font-bold text-gray-100 mb-3 flex-grow">Explorador Interactivo: MLOps y LLMs</h2>
-                                    
-                                        <p class="text-xs text-amber-500 font-semibold tracking-wider uppercase">
-                                            <time datetime="2025-08-12">12 de agosto de 2025</time>
-                                        </p>
-                                    
+                            </a>
+                        </article>
+                    
+                    <article class="card h-full" data-title="panel interactivo: guía de blogs automatizados" data-description="" data-tags="post">
+                        <a href="/posts/panel_interactivo/" class="block h-full rounded-xl overflow-hidden shadow-2xl bg-gray-900 border border-gray-700/50 aspect-ratio-16/9">
+                            <div class="card-content flex flex-col h-full">
+                                <div class="card-image-wrapper aspect-video overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1592609931095-54a2168ae893?q=80&amp;w=1740&amp;auto=format&amp;fit=crop" alt="Imagen para Panel Interactivo: Guía de Blogs Automatizados" class="w-full h-full object-cover transition-transform duration-400 ease-in-out transform group-hover:scale-105"></div>
+                                    <div class="p-8 flex-grow flex flex-col">
+                                        <h2 class="card-title text-2xl font-bold text-gray-100 mb-3 flex-grow">Panel Interactivo: Guía de Blogs Automatizados</h2>
+                                        
+                                            <p class="text-xs text-amber-500 font-semibold tracking-wider uppercase">
+                                                <time datetime="2025-08-12">12 de agosto de 2025</time>
+                                            </p>
+                                        
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </article>
-                
-                <article class="card h-full" data-title="guía interactiva para crear tu blog" data-description="" data-tags="post">
-                    <a href="/posts/blog_md/" class="block h-full rounded-xl overflow-hidden shadow-2xl bg-gray-900 border border-gray-700/50 aspect-ratio-16/9">
-                        <div class="card-content flex flex-col h-full">
-                            <div class="card-image-wrapper aspect-video overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&amp;w=1740&amp;h=960&amp;auto=format&amp;fit=crop" alt="Imagen para Guía Interactiva para Crear tu Blog" class="w-full h-full object-cover transition-transform duration-400 ease-in-out transform group-hover:scale-105"></div>
-                                <div class="p-8 flex-grow flex flex-col">
-                                    <h2 class="card-title text-2xl font-bold text-gray-100 mb-3 flex-grow">Guía Interactiva para Crear tu Blog</h2>
-                                    
-                                        <p class="text-xs text-amber-500 font-semibold tracking-wider uppercase">
-                                            <time datetime="2025-08-12">12 de agosto de 2025</time>
-                                        </p>
-                                    
+                            </a>
+                        </article>
+                    
+                    <article class="card h-full" data-title="explorador interactivo: mlops y llms" data-description="" data-tags="post">
+                        <a href="/posts/mlops/" class="block h-full rounded-xl overflow-hidden shadow-2xl bg-gray-900 border border-gray-700/50 aspect-ratio-16/9">
+                            <div class="card-content flex flex-col h-full">
+                                <div class="card-image-wrapper aspect-video overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&amp;w=1720&amp;h=960&amp;auto=format&amp;fit=crop" alt="Imagen para Explorador Interactivo: MLOps y LLMs" class="w-full h-full object-cover transition-transform duration-400 ease-in-out transform group-hover:scale-105"></div>
+                                    <div class="p-8 flex-grow flex flex-col">
+                                        <h2 class="card-title text-2xl font-bold text-gray-100 mb-3 flex-grow">Explorador Interactivo: MLOps y LLMs</h2>
+                                        
+                                            <p class="text-xs text-amber-500 font-semibold tracking-wider uppercase">
+                                                <time datetime="2025-08-12">12 de agosto de 2025</time>
+                                            </p>
+                                        
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </article>
-                
+                            </a>
+                        </article>
+                    
+                    <article class="card h-full" data-title="guía interactiva para crear tu blog" data-description="" data-tags="post">
+                        <a href="/posts/blog_md/" class="block h-full rounded-xl overflow-hidden shadow-2xl bg-gray-900 border border-gray-700/50 aspect-ratio-16/9">
+                            <div class="card-content flex flex-col h-full">
+                                <div class="card-image-wrapper aspect-video overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&amp;w=1740&amp;h=960&amp;auto=format&amp;fit=crop" alt="Imagen para Guía Interactiva para Crear tu Blog" class="w-full h-full object-cover transition-transform duration-400 ease-in-out transform group-hover:scale-105"></div>
+                                    <div class="p-8 flex-grow flex flex-col">
+                                        <h2 class="card-title text-2xl font-bold text-gray-100 mb-3 flex-grow">Guía Interactiva para Crear tu Blog</h2>
+                                        
+                                            <p class="text-xs text-amber-500 font-semibold tracking-wider uppercase">
+                                                <time datetime="2025-08-12">12 de agosto de 2025</time>
+                                            </p>
+                                        
+                                    </div>
+                                </div>
+                            </a>
+                        </article>
+                    
+                </div>
+                <p id="noResults" class="text-center text-gray-500 mt-12 hidden">No se encontraron artículos que coincidan con tu
+                    búsqueda.</p>
             </div>
-            <p id="noResults" class="text-center text-gray-500 mt-12 hidden">No se encontraron artículos que coincidan con tu
-                búsqueda.</p>
-        </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const searchInput = document.getElementById('searchInput');
-                const postsContainer = document.getElementById('postsContainer');
-                const allPosts = Array.from(postsContainer.getElementsByClassName('card'));
-                const noResults = document.getElementById('noResults');
-                if (searchInput) {
-                    searchInput.addEventListener('keyup', (e) => {
-                        const searchTerm = e
-                            .target
-                            .value
-                            .toLowerCase()
-                            .trim();
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const searchInput = document.getElementById('searchInput');
+                    const dateFilter = document.getElementById('dateFilter');
+                    const postsContainer = document.getElementById('postsContainer');
+                    const allPosts = Array.from(postsContainer.getElementsByClassName('card'));
+                    const noResults = document.getElementById('noResults');
+                    function applyFilters() {
+                        const searchTerm = (searchInput ?. value || '').toLowerCase().trim();
+                        const selectedDate = (dateFilter ?. value || '').trim(); // formato YYYY-MM-DD
                         let visiblePosts = 0;
                         allPosts.forEach(post => {
                             const title = post.dataset.title || '';
                             const description = post.dataset.description || '';
                             const tags = post.dataset.tags || '';
-                            const isVisible = title.includes(searchTerm) || description.includes(searchTerm) || tags.includes(searchTerm);
-                            if (isVisible) {
+                            const postDateRaw = post.querySelector('time') ?. getAttribute('datetime') || '';
+                            // Normalizar la fecha (coge solo YYYY-MM-DD, por si lleva hora)
+                            const postDate = postDateRaw.split('T')[0];
+                            const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm) || tags.includes(searchTerm);
+                            const matchesDate = ! selectedDate || postDate === selectedDate;
+                            if (matchesSearch && matchesDate) {
                                 post.classList.remove('filtered');
                                 visiblePosts++;
                             } else {
@@ -267,10 +273,11 @@
                             }
                         });
                         noResults.classList.toggle('hidden', visiblePosts > 0);
-                    });
-                }
-            });
-        </script>
+                    }
+                    searchInput ?. addEventListener('keyup', applyFilters);
+                    dateFilter ?. addEventListener('change', applyFilters);
+                });
+            </script>
         </main>
         <footer class="text-center py-12 text-gray-500 text-sm border-t border-gray-800">
             <p>&copy; 2025 Carlos CG. Creado con Eleventy.</p>

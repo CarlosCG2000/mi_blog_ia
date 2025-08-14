@@ -62,12 +62,14 @@ permalink: "/archive/index.html"
       <p class="text-lg text-gray-400 mt-4">Explora todos los artículos publicados hasta la fecha.</p>
    </header>
    <!-- Search Input -->
-   <div class="max-w-xl mx-auto mb-12">
-      <input type="search" id="searchInput" placeholder="Buscar por título, descripción, etiqueta..." class="w-full px-5 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none
-                focus:ring-2 focus:ring-amber-500 transition-all">
+   <div class="max-w-xl mx-auto mb-12 flex gap-4">
+      <input type="search" id="searchInput" placeholder="Buscar por título, descripción, etiqueta..." class="flex-grow px-5 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500
+                focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all">
+      <input type="date" id="dateFilter" class="px-3 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2
+                    focus:ring-amber-500 transition-all">
    </div>
 
-   <div class="post-grid max-w-7xl mx-auto" id="postsContainer">
+   <div class="post-grid max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch" id="postsContainer">
 
    </div>
    <p id="noResults" class="text-center text-gray-500 mt-12 hidden">No se encontraron artículos que coincidan con tu
@@ -76,32 +78,35 @@ permalink: "/archive/index.html"
 <script>
    document.addEventListener('DOMContentLoaded', () => {
       const searchInput = document.getElementById('searchInput');
+      const dateFilter = document.getElementById('dateFilter');
       const postsContainer = document.getElementById('postsContainer');
       const allPosts = Array.from(postsContainer.getElementsByClassName('card'));
       const noResults = document.getElementById('noResults');
-      if (searchInput) {
-         searchInput.addEventListener('keyup', (e) => {
-            const searchTerm = e
-               .target
-               .value
-               .toLowerCase()
-               .trim();
-            let visiblePosts = 0;
-            allPosts.forEach(post => {
-               const title = post.dataset.title || '';
-               const description = post.dataset.description || '';
-               const tags = post.dataset.tags || '';
-               const isVisible = title.includes(searchTerm) || description.includes(searchTerm) ||
-                  tags.includes(searchTerm);
-               if (isVisible) {
-                  post.classList.remove('filtered');
-                  visiblePosts++;
-               } else {
-                  post.classList.add('filtered');
-               }
-            });
-            noResults.classList.toggle('hidden', visiblePosts > 0);
+
+      function applyFilters() {
+         const searchTerm = (searchInput?.value || '').toLowerCase().trim();
+         const selectedDate = (dateFilter?.value || '').trim(); // formato YYYY-MM-DD
+         let visiblePosts = 0;
+         allPosts.forEach(post => {
+            const title = post.dataset.title || '';
+            const description = post.dataset.description || '';
+            const tags = post.dataset.tags || '';
+            const postDateRaw = post.querySelector('time')?.getAttribute('datetime') || '';
+            // Normalizar la fecha (coge solo YYYY-MM-DD, por si lleva hora)
+            const postDate = postDateRaw.split('T')[0];
+            const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm) || tags
+               .includes(searchTerm);
+            const matchesDate = !selectedDate || postDate === selectedDate;
+            if (matchesSearch && matchesDate) {
+               post.classList.remove('filtered');
+               visiblePosts++;
+            } else {
+               post.classList.add('filtered');
+            }
          });
+         noResults.classList.toggle('hidden', visiblePosts > 0);
       }
+      searchInput?.addEventListener('keyup', applyFilters);
+      dateFilter?.addEventListener('change', applyFilters);
    });
 </script>
