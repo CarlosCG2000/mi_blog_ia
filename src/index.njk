@@ -85,18 +85,19 @@ layout: "layouts/base.njk"
                                     {% endif %}
                                 </div>
                             </div>
-                        </a>
-                    </article>
-                {% endif %}
-            {% endfor %}
-        </div>
-        <div class="text-center mt-16">
-            <a
-                href="/archive"
-                class="more-posts-btn inline-flex items-center text-amber-500 font-semibold text-lg hover:text-amber-400
-                    transition-colors">
-                Ver todos los artículos
-                <div class="ml-2">→</div>
-            </a>
-        </div>
-    </main>
+                        </div>
+                    </a>
+                </article>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <div class="text-center mt-16">
+        <a
+            href="/archive"
+            class="more-posts-btn inline-flex items-center text-amber-500 font-semibold text-lg hover:text-amber-400
+                transition-colors">
+            Ver todos los artículos
+            <div class="ml-2">→</div>
+        </a>
+    </div>
+</main>
